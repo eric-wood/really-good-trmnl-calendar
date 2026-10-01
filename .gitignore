@@ -3,3 +3,6 @@ _build/
 
 # npm
 node_modules/
+
+# date-shifted copies of examples/ (bin/shift-examples)
+.examples/

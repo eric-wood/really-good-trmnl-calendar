@@ -3,7 +3,7 @@ import { prepEvents, bucketEvents } from './events';
 
 console.clear() // TODO: remove :)
 
-window.renderEvents = (numDays) => {
+window.renderEvents = (numDays, format) => {
   const events = prepEvents();
   const days = bucketEvents(events, new Date(), numDays);
   console.log(days);
@@ -12,9 +12,10 @@ window.renderEvents = (numDays) => {
 
   const dayTemplate = template("#day-template");
   const eventTemplate = template("#event-template");
+  const isFull = format === "full";
 
   days.forEach((day) => {
-    if (day.events.length === 0) {
+    if (!isFull && day.events.length === 0) {
       return;
     }
 
@@ -29,6 +30,10 @@ window.renderEvents = (numDays) => {
     });
 
     daysContainer.innerHTML += tempContainer.innerHTML;
-  })
+  });
+
+  // stupid hack to render dividers between elements; the first is marked for removal
+  const toDelete = document.querySelectorAll(".delete-first")[0];
+  toDelete?.remove();
 };
 

@@ -4,6 +4,9 @@
 # real polling URL. examples/data.json should be the JSON LaraPaper produces
 # from the iCal feed (e.g. { "ical": [ ... ] }).
 #
+# The examples are served from .examples/, a copy with every date shifted so
+# examples/anchor-date lands on today (see bin/shift-examples).
+#
 # Also rebuilds src/shared.liquid from shared/ and js/ (see bin/build-shared)
 # before starting, and whenever those change while trmnlp runs.
 #
@@ -26,6 +29,7 @@ fingerprint() {
     find js shared -type f -print0 | sort -z | xargs -0 cat | cksum
 }
 
+bin/shift-examples
 bin/build-shared
 (
     last="$(fingerprint)"
@@ -40,7 +44,7 @@ bin/build-shared
 WATCH_PID=$!
 
 # --watch=forever keeps the server up even though stdin isn't a terminal
-node_modules/.bin/esbuild --serve="127.0.0.1:$PORT" --servedir=examples --watch=forever \
+node_modules/.bin/esbuild --serve="127.0.0.1:$PORT" --servedir=.examples --watch=forever \
     --log-level=warning < /dev/null &
 SERVER_PID=$!
 trap 'kill $SERVER_PID $WATCH_PID 2>/dev/null' EXIT

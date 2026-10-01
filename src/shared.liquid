@@ -17,27 +17,6 @@
   // user configuration (custom field values from settings.yml), keyed by keyname
   window.config = {{ trmnl.plugin_settings.custom_fields_values | json | replace: "</", "<\/" }};
 </script>
-{% raw %}
-<template id="day-template">
-  <div class="flex flex--col gap flex--stretch-x">
-    <div class="flex flex--between flex--left flex--stretch-x">
-      <span class="title">{{ dayOfWeek }}</span>
-      <span class="title">{{ dateString }}</span>
-    </div>
-    <div class="events flex flex--col gap--small"></div>
-  </div>
-</template>
-
-<template id="event-template">
-  <div class="item item--emphasis-{{ calendarIndex }}">
-    <div class="meta"></div>
-    <div class="content">
-      <span class="title title--small">{{ name }}</span>
-      <span class="description">{{ durationString }}</span>
-    </div>
-  </div>
-</template>
-{% endraw %}
 <script>
 {% raw %}
 (() => {
@@ -938,15 +917,16 @@
 
   // js/main.js
   console.clear();
-  window.renderEvents = (numDays) => {
+  window.renderEvents = (numDays, format) => {
     const events = prepEvents();
     const days = bucketEvents(events, /* @__PURE__ */ new Date(), numDays);
     console.log(days);
     const daysContainer = document.querySelector(".days");
     const dayTemplate = template2("#day-template");
     const eventTemplate = template2("#event-template");
+    const isFull = format === "full";
     days.forEach((day) => {
-      if (day.events.length === 0) {
+      if (!isFull && day.events.length === 0) {
         return;
       }
       const html = dayTemplate(day);
@@ -959,6 +939,8 @@
       });
       daysContainer.innerHTML += tempContainer.innerHTML;
     });
+    const toDelete = document.querySelectorAll(".delete-first")[0];
+    toDelete?.remove();
   };
 })();
 {% endraw %}

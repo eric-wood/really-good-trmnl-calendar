@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+//
+// Copy examples/*.json to .examples/, shifting every ISO datetime by the number
+// of days between examples/anchor-date (the day the data treats as "today")
+// and the actual today, so the preview always shows the same relative spread
+// of events. Only the date part moves; times of day and UTC offsets are kept.
+//
+
+import fs from "node:fs";
+import path from "node:path";
+
+const root = path.join(import.meta.dirname, "..");
+const srcDir = path.join(root, "examples");
+const outDir = path.join(root, ".examples");
+
+const DAY = 24 * 60 * 60 * 1000;
+const toUTCDay = (y, m, d) => Date.UTC(y, m - 1, d);
+
+const [ay, am, ad] = fs.readFileSync(path.join(srcDir, "anchor-date"), "utf8").trim().split("-").map(Number);
+const now = new Date();
+const shiftDays = Math.round(
+  (toUTCDay(now.getFullYear(), now.getMonth() + 1, now.getDate()) - toUTCDay(ay, am, ad)) / DAY,
+);
+
+const pad = (n) => String(n).padStart(2, "0");
+const shiftDate = (y, m, d) => {
+  const shifted = new Date(toUTCDay(y, m, d) + shiftDays * DAY);
+  return `${shifted.getUTCFullYear()}-${pad(shifted.getUTCMonth() + 1)}-${pad(shifted.getUTCDate())}`;
+};
+
+fs.rmSync(outDir, { recursive: true, force: true });
+fs.mkdirSync(outDir);
+
+for (const file of fs.readdirSync(srcDir).filter((f) => f.endsWith(".json"))) {
+  const json = fs.readFileSync(path.join(srcDir, file), "utf8");
+  // any string value that starts with a YYYY-MM-DD date
+  const shifted = json.replace(/"(\d{4})-(\d{2})-(\d{2})(T[^"]*)?"/g, (_, y, m, d, rest = "") =>
+    `"${shiftDate(+y, +m, +d)}${rest}"`,
+  );
+  fs.writeFileSync(path.join(outDir, file), shifted);
+}
+
+console.log(`shifted examples by ${shiftDays} day(s) into .examples/`);
