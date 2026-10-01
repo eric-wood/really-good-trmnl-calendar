@@ -1,0 +1,681 @@
+{
+  "ical": [
+    {
+      "DTEND": "2026-09-29T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-09-29T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 0
+    },
+    {
+      "DTEND": "2026-09-30T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-09-30T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 1
+    },
+    {
+      "DTEND": "2026-09-30T10:15:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-09-30T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Vendor call",
+      "TRANSP": "OPAQUE",
+      "UID": "d4c28c2e-7c26-847f-0316-909e3bbbe9ea"
+    },
+    {
+      "DTEND": "2026-09-30T15:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-09-30T14:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Design review",
+      "TRANSP": "OPAQUE",
+      "UID": "ca02135e-92b1-d3f2-8ede-0d7ac3baea9e",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "WE"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 0
+    },
+    {
+      "DTEND": "2026-10-01T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-01T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 2
+    },
+    {
+      "DTEND": "2026-10-01T16:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-01T13:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Focus time",
+      "TRANSP": "OPAQUE",
+      "UID": "4f426dcb-b394-fb36-bb2d-420f0f88080b",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "TH"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 0
+    },
+    {
+      "DTEND": "2026-10-02T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-02T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 3
+    },
+    {
+      "DTEND": "2026-10-02T13:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-02T12:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Lunch with Sam",
+      "TRANSP": "OPAQUE",
+      "UID": "66d22876-72fd-f202-2a96-fb1a14a0f9e7"
+    },
+    {
+      "DTEND": "2026-10-02T16:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-02T15:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Sprint demo",
+      "TRANSP": "OPAQUE",
+      "UID": "49952399-c4aa-eac1-37dc-76fb0f17a300",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "INTERVAL": "2",
+        "BYDAY": "FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 0
+    },
+    {
+      "DTEND": "2026-10-05T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-05T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 4
+    },
+    {
+      "DTEND": "2026-10-05T11:30:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-05T11:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "1:1 with Priya",
+      "TRANSP": "OPAQUE",
+      "UID": "9be4bcfc-49b6-4a08-72e6-cc3ababced20",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 0
+    },
+    {
+      "DTEND": "2026-10-06T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-06T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 5
+    },
+    {
+      "DTEND": "2026-10-06T11:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-06T10:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Interview: backend candidate",
+      "TRANSP": "OPAQUE",
+      "UID": "230d977e-e225-7159-4720-771f8ca81811"
+    },
+    {
+      "DTEND": "2026-10-07T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-07T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 6
+    },
+    {
+      "DTEND": "2026-10-07T15:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-07T14:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Design review",
+      "TRANSP": "OPAQUE",
+      "UID": "ca02135e-92b1-d3f2-8ede-0d7ac3baea9e",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "WE"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 1
+    },
+    {
+      "DTEND": "2026-10-08T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-08T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 7
+    },
+    {
+      "DTEND": "2026-10-08T16:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-08T13:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Focus time",
+      "TRANSP": "OPAQUE",
+      "UID": "4f426dcb-b394-fb36-bb2d-420f0f88080b",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "TH"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 1
+    },
+    {
+      "DTEND": "2026-10-08T14:30:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-08T13:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Quarterly business review",
+      "TRANSP": "OPAQUE",
+      "UID": "8cdb305f-dd2e-1609-6e36-aab0d1bc52d9"
+    },
+    {
+      "DTEND": "2026-10-09T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-09T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 8
+    },
+    {
+      "DTEND": "2026-10-10T01:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-09T22:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Deploy window",
+      "TRANSP": "OPAQUE",
+      "UID": "fc891b4a-6a50-df4d-b4d6-6a3a47469a4d"
+    },
+    {
+      "DTEND": "2026-10-13T00:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-12T00:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Company holiday",
+      "TRANSP": "TRANSPARENT",
+      "UID": "616499c9-e25a-7605-aec6-f0245bd86d40"
+    },
+    {
+      "DTEND": "2026-10-12T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-12T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 9
+    },
+    {
+      "DTEND": "2026-10-12T11:30:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-12T11:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "1:1 with Priya",
+      "TRANSP": "OPAQUE",
+      "UID": "9be4bcfc-49b6-4a08-72e6-cc3ababced20",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 1
+    },
+    {
+      "DTEND": "2026-10-16T00:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-13T00:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Planning offsite",
+      "TRANSP": "TRANSPARENT",
+      "UID": "153e7c2a-26a2-c0bd-3b12-87fff52ddf5d"
+    },
+    {
+      "DTEND": "2026-10-13T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-13T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 10
+    },
+    {
+      "DTEND": "2026-10-14T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-14T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 11
+    },
+    {
+      "DTEND": "2026-10-14T15:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-14T14:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Design review",
+      "TRANSP": "OPAQUE",
+      "UID": "ca02135e-92b1-d3f2-8ede-0d7ac3baea9e",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "WE"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 2
+    },
+    {
+      "DTEND": "2026-10-14T21:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-14T18:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Offsite dinner",
+      "TRANSP": "OPAQUE",
+      "UID": "a8948c89-3b61-8676-26bb-7dbd2d1c9af0"
+    },
+    {
+      "DTEND": "2026-10-15T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-15T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 12
+    },
+    {
+      "DTEND": "2026-10-15T16:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-15T13:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Focus time",
+      "TRANSP": "OPAQUE",
+      "UID": "4f426dcb-b394-fb36-bb2d-420f0f88080b",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "TH"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 2
+    },
+    {
+      "DTEND": "2026-10-16T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-16T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 13
+    },
+    {
+      "DTEND": "2026-10-16T16:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-16T15:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Sprint demo",
+      "TRANSP": "OPAQUE",
+      "UID": "49952399-c4aa-eac1-37dc-76fb0f17a300",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "INTERVAL": "2",
+        "BYDAY": "FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 1
+    },
+    {
+      "DTEND": "2026-10-19T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-19T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 14
+    },
+    {
+      "DTEND": "2026-10-19T11:30:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-19T11:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "1:1 with Priya",
+      "TRANSP": "OPAQUE",
+      "UID": "9be4bcfc-49b6-4a08-72e6-cc3ababced20",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 2
+    },
+    {
+      "DTEND": "2026-10-20T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-20T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 15
+    },
+    {
+      "DTEND": "2026-10-21T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-21T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 16
+    },
+    {
+      "DTEND": "2026-10-21T11:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-21T10:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "All hands",
+      "TRANSP": "OPAQUE",
+      "UID": "482c9cbc-4343-5cc5-2eae-05cf96d0cc5f"
+    },
+    {
+      "DTEND": "2026-10-21T15:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-21T14:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Design review",
+      "TRANSP": "OPAQUE",
+      "UID": "ca02135e-92b1-d3f2-8ede-0d7ac3baea9e",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "WE"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 3
+    },
+    {
+      "DTEND": "2026-10-22T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-22T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 17
+    },
+    {
+      "DTEND": "2026-10-22T16:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-22T13:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Focus time",
+      "TRANSP": "OPAQUE",
+      "UID": "4f426dcb-b394-fb36-bb2d-420f0f88080b",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "TH"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 3
+    },
+    {
+      "DTEND": "2026-10-23T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-23T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 18
+    },
+    {
+      "DTEND": "2026-10-26T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-26T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 19
+    },
+    {
+      "DTEND": "2026-10-26T11:30:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-26T11:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "1:1 with Priya",
+      "TRANSP": "OPAQUE",
+      "UID": "9be4bcfc-49b6-4a08-72e6-cc3ababced20",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 3
+    },
+    {
+      "DTEND": "2026-10-27T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-27T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 20
+    },
+    {
+      "DTEND": "2026-10-27T15:30:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-27T14:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Perf review prep",
+      "TRANSP": "OPAQUE",
+      "UID": "88daf401-6b40-13ef-254b-0c4e010c4759"
+    },
+    {
+      "DTEND": "2026-10-28T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-28T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 21
+    },
+    {
+      "DTEND": "2026-10-28T15:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-28T14:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Design review",
+      "TRANSP": "OPAQUE",
+      "UID": "ca02135e-92b1-d3f2-8ede-0d7ac3baea9e",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "WE"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 4
+    },
+    {
+      "DTEND": "2026-10-29T09:45:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-29T09:30:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Standup",
+      "TRANSP": "OPAQUE",
+      "UID": "6513270e-269e-0d37-f2a7-4de452e6b438",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "MO,TU,WE,TH,FR"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 22
+    },
+    {
+      "DTEND": "2026-10-29T16:00:00-06:00",
+      "DTSTAMP": "2026-09-30T10:53:34+00:00",
+      "DTSTART": "2026-10-29T13:00:00-06:00",
+      "SEQUENCE": "0",
+      "SUMMARY": "Focus time",
+      "TRANSP": "OPAQUE",
+      "UID": "4f426dcb-b394-fb36-bb2d-420f0f88080b",
+      "RRULE": {
+        "FREQ": "WEEKLY",
+        "BYDAY": "TH"
+      },
+      "RECURRING": true,
+      "RECURRENCE_INSTANCE": 4
+    }
+  ]
+}

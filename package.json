@@ -1,0 +1,11 @@
+{
+  "name": "trmnl-calendar",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  },
+  "dependencies": {
+    "lodash-es": "^4.18.1"
+  }
+}

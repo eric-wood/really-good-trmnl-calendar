@@ -1,0 +1,40 @@
+#
+# Changes to this file will be overwritten by `trmnlp pull`.
+#
+# Docs: https://help.trmnl.com/en/articles/10542599-importing-and-exporting-private-plugins#h_581fb988f0
+#
+---
+strategy: polling
+no_screen_padding: 'no'
+dark_mode: 'no'
+static_data: ''
+polling_verb: get
+framework_version: latest
+polling_url: ''
+polling_headers: ''
+name: My Plugin
+description: ''
+refresh_interval: 1440
+custom_fields:
+  - keyname: time_format
+    field_type: select
+    name: Time format
+    options:
+      - '12-hour (1:30 PM)': '12'
+      - '24-hour (13:30)': '24'
+    default: '12'
+  - keyname: calendar_1_name
+    field_type: string
+    name: Calendar 1 name
+    description: Name for the first polling URL's calendar
+    optional: true
+  - keyname: calendar_2_name
+    field_type: string
+    name: Calendar 2 name
+    description: Name for the second polling URL's calendar
+    optional: true
+  - keyname: calendar_3_name
+    field_type: string
+    name: Calendar 3 name
+    description: Name for the third polling URL's calendar
+    optional: true

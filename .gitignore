@@ -1,0 +1,5 @@
+# trmnlp build output
+_build/
+
+# npm
+node_modules/

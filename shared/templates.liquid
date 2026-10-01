@@ -1,0 +1,21 @@
+{% raw %}
+<template id="day-template">
+  <div class="flex flex--col gap flex--stretch-x">
+    <div class="flex flex--between flex--left flex--stretch-x">
+      <span class="title">{{ dayOfWeek }}</span>
+      <span class="title">{{ dateString }}</span>
+    </div>
+    <div class="events flex flex--col gap--small"></div>
+  </div>
+</template>
+
+<template id="event-template">
+  <div class="item item--emphasis-{{ calendarIndex }}">
+    <div class="meta"></div>
+    <div class="content">
+      <span class="title title--small">{{ name }}</span>
+      <span class="description">{{ durationString }}</span>
+    </div>
+  </div>
+</template>
+{% endraw %}

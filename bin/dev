@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+#
+# Run trmnlp against the example payload in examples/data.json instead of the
+# real polling URL. examples/data.json should be the JSON LaraPaper produces
+# from the iCal feed (e.g. { "ical": [ ... ] }).
+#
+# Also rebuilds src/shared.liquid from shared/ and js/ (see bin/build-shared)
+# before starting, and whenever those change while trmnlp runs.
+#
+# Usage: bin/dev [trmnlp args]   (defaults to `serve`)
+#
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+PORT="${EXAMPLE_PORT:-4568}"
+
+if [ ! -f examples/data.json ]; then
+    echo "missing examples/data.json — drop your example payload there" >&2
+    exit 1
+fi
+
+# cheap content fingerprint of everything build-shared reads
+fingerprint() {
+    find js shared -type f -print0 | sort -z | xargs -0 cat | cksum
+}
+
+bin/build-shared
+(
+    last="$(fingerprint)"
+    while sleep 1; do
+        current="$(fingerprint)"
+        if [ "$current" != "$last" ]; then
+            last="$current"
+            bin/build-shared || true
+        fi
+    done
+) &
+WATCH_PID=$!
+
+# --watch=forever keeps the server up even though stdin isn't a terminal
+node_modules/.bin/esbuild --serve="127.0.0.1:$PORT" --servedir=examples --watch=forever \
+    --log-level=warning < /dev/null &
+SERVER_PID=$!
+trap 'kill $SERVER_PID $WATCH_PID 2>/dev/null' EXIT
+
+# wait for the server so trmnlp's initial poll doesn't miss it
+for _ in $(seq 1 50); do
+    curl -sf "http://127.0.0.1:$PORT/data.json" > /dev/null && break
+    sleep 0.1
+done
+
+bin/trmnlp "${@:-serve}"
