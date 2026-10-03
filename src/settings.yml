@@ -38,3 +38,10 @@ custom_fields:
     name: Calendar 3 name
     description: Name for the third polling URL's calendar
     optional: true
+  - keyname: view_type
+    field_type: select
+    name: Day view type
+    options:
+      - 'Event list': list
+      - 'Hourly': hourly
+    default: list

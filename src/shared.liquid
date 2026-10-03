@@ -20,6 +20,68 @@
 <script>
 {% raw %}
 (() => {
+  // js/events.js
+  var fullDay = 60 * 60 * 24 * 1e3;
+  var formatTimeDuration = (startDate, endDate, allDay) => {
+    const formatTime = (d) => d.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: window.config.time_format === "12"
+    }).toLowerCase();
+    if (allDay) {
+      return "All day";
+    }
+    const start = formatTime(startDate);
+    const end = formatTime(endDate);
+    return `${start} - ${end}`;
+  };
+  var calendarNames = [
+    window.config.calendar_1_name,
+    window.config.calendar_2_name,
+    window.config.calendar_3_name
+  ];
+  var prepEvents = () => {
+    const events = window.rawEvents.flatMap((calendarEvents, calendarIndex) => {
+      const calendarName = calendarNames[calendarIndex] || `Calendar ${calendarIndex + 1}`;
+      return (calendarEvents ?? []).map((event) => {
+        const start = new Date(event.DTSTART);
+        const end = new Date(event.DTEND);
+        const name = event.SUMMARY;
+        const allDay = end - start >= fullDay;
+        const durationString = formatTimeDuration(start, end, allDay);
+        return {
+          start,
+          end,
+          durationString,
+          name,
+          allDay,
+          calendarIndex,
+          calendarName
+        };
+      });
+    });
+    return events;
+  };
+  var bucketEvents = (allEvents, startDate, numDays) => {
+    startDate.setHours(0, 0, 0, 0);
+    const sortedEvents = [...allEvents].sort((a, b) => a.start - b.start);
+    return [...Array(numDays).keys()].map((i) => {
+      const date = new Date(startDate);
+      date.setDate(date.getDate() + i);
+      const endDate = new Date(date);
+      endDate.setDate(endDate.getDate() + 1);
+      const events = sortedEvents.filter(({ start, end }) => start < endDate && end > date);
+      const dayOfWeek = date.toLocaleDateString("en-US", { weekday: "long" });
+      const dateString = date.toLocaleDateString("en-US", { month: "numeric", day: "numeric" });
+      return {
+        date,
+        dayOfWeek,
+        dateString,
+        events
+      };
+    });
+  };
+
   // node_modules/lodash-es/_arrayEach.js
   function arrayEach(array, iteratee) {
     var index = -1, length = array == null ? 0 : array.length;
@@ -850,97 +912,75 @@
   // js/template.js
   var template2 = (selector) => {
     const raw = document.querySelector(selector).innerHTML;
-    return template_default(raw, { interpolate: /{{([\s\S]+?)}}/g });
+    const compiled = template_default(raw, { interpolate: /{{([\s\S]+?)}}/g });
+    return (...args) => {
+      const html = compiled(...args);
+      const container = document.createElement("div");
+      container.innerHTML = html;
+      return container.children[0];
+    };
   };
 
-  // js/events.js
-  var fullDay = 60 * 60 * 24 * 1e3;
-  var formatTimeDuration = (startDate, endDate, allDay) => {
-    const formatTime = (d) => d.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: window.config.time_format === "12"
-    }).toLowerCase();
-    if (allDay) {
-      return "All day";
-    }
-    const start = formatTime(startDate);
-    const end = formatTime(endDate);
-    return `${start} - ${end}`;
-  };
-  var calendarNames = [
-    window.config.calendar_1_name,
-    window.config.calendar_2_name,
-    window.config.calendar_3_name
-  ];
-  var prepEvents = () => {
-    const events = window.rawEvents.flatMap((calendarEvents, calendarIndex) => {
-      const calendarName = calendarNames[calendarIndex] || `Calendar ${calendarIndex + 1}`;
-      return (calendarEvents ?? []).map((event) => {
-        const start = new Date(event.DTSTART);
-        const end = new Date(event.DTEND);
-        const name = event.SUMMARY;
-        const allDay = end - start >= fullDay;
-        const durationString = formatTimeDuration(start, end, allDay);
-        return {
-          start,
-          end,
-          durationString,
-          name,
-          allDay,
-          calendarIndex,
-          calendarName
-        };
-      });
-    });
-    return events;
-  };
-  var bucketEvents = (allEvents, startDate, numDays) => {
-    startDate.setHours(0, 0, 0, 0);
-    const sortedEvents = [...allEvents].sort((a, b) => a.start - b.start);
-    return [...Array(numDays).keys()].map((i) => {
-      const date = new Date(startDate);
-      date.setDate(date.getDate() + i);
-      const endDate = new Date(date);
-      endDate.setDate(endDate.getDate() + 1);
-      const events = sortedEvents.filter(({ start, end }) => start < endDate && end > date);
-      const dayOfWeek = date.toLocaleDateString("en-US", { weekday: "long" });
-      const dateString = date.toLocaleDateString("en-US", { month: "numeric", day: "numeric" });
-      return {
-        date,
-        dayOfWeek,
-        dateString,
-        events
-      };
-    });
-  };
-
-  // js/main.js
-  console.clear();
-  window.renderEvents = (numDays, format) => {
-    const events = prepEvents();
-    const days = bucketEvents(events, /* @__PURE__ */ new Date(), numDays);
-    console.log(days);
+  // js/list_view.js
+  var renderListView = (days, format) => {
     const daysContainer = document.querySelector(".days");
     const dayTemplate = template2("#day-template");
     const eventTemplate = template2("#event-template");
     const isFull = format === "full";
+    let heightBudget = daysContainer.getBoundingClientRect().height;
+    let continueRender = true;
     days.forEach((day) => {
+      if (!isFull && !continueRender) {
+        return;
+      }
       if (!isFull && day.events.length === 0) {
         return;
       }
-      const html = dayTemplate(day);
-      const tempContainer = document.createElement("DIV");
-      tempContainer.innerHTML = html;
-      const eventsContainer = tempContainer.querySelector(".events");
+      const dayEl = dayTemplate(day);
+      if (isFull) {
+        daysContainer.appendChild(verticalDivider());
+      }
+      daysContainer.appendChild(dayEl);
+      let numEventsRendered = 0;
+      const eventsContainer = dayEl.querySelector(".events");
+      if (isFull) {
+        continueRender = true;
+        heightBudget = daysContainer.getBoundingClientRect().height;
+      }
       day.events.forEach((event) => {
-        const html2 = eventTemplate(event);
-        eventsContainer.innerHTML += html2;
+        if (!continueRender) {
+          return;
+        }
+        const eventEl = eventTemplate(event);
+        eventsContainer.appendChild(eventEl);
+        const deficit = heightBudget - dayEl.getBoundingClientRect().height;
+        if (deficit < 0) {
+          continueRender = false;
+          eventEl.remove();
+          return;
+        }
+        numEventsRendered += 1;
       });
-      daysContainer.innerHTML += tempContainer.innerHTML;
+      if (!isFull && numEventsRendered === 0) {
+        dayEl.remove();
+      }
+      heightBudget -= dayEl.getBoundingClientRect().height;
     });
     const toDelete = document.querySelectorAll(".delete-first")[0];
     toDelete?.remove();
+  };
+  var verticalDivider = () => {
+    const divider = document.createElement("div");
+    divider.classList.add("divider--v");
+    divider.classList.add("delete-first");
+    return divider;
+  };
+
+  // js/main.js
+  window.renderEvents = (numDays, format) => {
+    const events = prepEvents();
+    const days = bucketEvents(events, /* @__PURE__ */ new Date(), numDays);
+    renderListView(days, format);
   };
 })();
 {% endraw %}
