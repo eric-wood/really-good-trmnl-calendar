@@ -31,8 +31,9 @@
   <div class="hourly-event bg--white rounded--xsmall" style="top: {{ top }}px; bottom: {{ bottom }}px;">
     <div class="label" data-value-fit="true">{{ name }}</div>
     <div>
-      <span class="label label--small">{{ durationString }}</spank
+      <span class="label label--small">{{ durationString }}</span>
     </div>
+    <div class="stripe"></div>
   </div>
 </template>
 {% endraw %}
@@ -47,7 +48,8 @@
 .hour-marker .label {
   position: absolute;
   transform: translateY(-50%);
-  padding-right: 5px;
+  /*padding-right: 5px;*/
+  text-align: right;
 }
 
 .events {
@@ -63,10 +65,18 @@
   border: solid var(--bg-black-color) 1px;
   z-index: 1;
 }
+
+.hourly-event .stripe {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 5px;
+}
 </style>
 
 <div class="layout layout--col layout--stretch layout--left">
-  <div class="days flex flex--row flex--left flex--top gap"></div>
+  <div class="days flex flex--row flex--left flex--top gap--small"></div>
 </div>
 
 <div class="title_bar">

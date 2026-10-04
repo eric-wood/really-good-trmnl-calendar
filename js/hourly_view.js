@@ -2,6 +2,8 @@ import { template } from './template';
 import { minMaxHour } from './events';
 import { deleteFirstHack, verticalDivider, hideStuff } from './util';
 
+const backgrounds = [10, 30, 60];
+
 export const renderHourlyView = (days, startDate, format) => {
   const daysContainer = document.querySelector(".days");
 
@@ -9,7 +11,9 @@ export const renderHourlyView = (days, startDate, format) => {
   const eventTemplate = template("#hourly-event");
   const isFull = format === "full";
 
-  const weekWindow = minMaxHour(days.flatMap(({ events }) => events));
+  const allEvents = days.flatMap(({ events }) => events);
+  const numCalendars = new Set(allEvents.map(({ calendarIndex }) => calendarIndex)).size;
+  const weekWindow = minMaxHour(allEvents);
 
   // TODO: logic to handle when this duration is tiny; maybe set a min day size?
   const numHours = weekWindow.numHours;
@@ -47,6 +51,10 @@ export const renderHourlyView = (days, startDate, format) => {
         name: event.name,
         durationString: event.durationString,
       });
+
+      if (numCalendars > 1) {
+        eventEl.querySelector(".stripe").classList.add(`bg--gray-${backgrounds[event.calendarIndex]}`);
+      }
       eventsContainer.appendChild(eventEl)
     });
 
@@ -62,12 +70,27 @@ export const renderHourlyView = (days, startDate, format) => {
   const height = eventDimensions.height;
   const pxPerHour = height / numHours;
 
+  let maxLabelWidth = 0;
   for (let i = 0; i < numHours; i += 1) {
     const hour = startTime.getHours();
     startTime.setHours(startTime.getHours() + 1);
     const y = i * pxPerHour + startPx;
-    daysContainer.appendChild(hourDivider(y, hour));
+    const divider = hourDivider(y, hour);
+    daysContainer.appendChild(divider);
+
+    const label = divider.querySelector(".label");
+    const labelWidth = label.getBoundingClientRect().width;
+    if (labelWidth > maxLabelWidth) {
+      maxLabelWidth = labelWidth;
+    }
   }
+
+  // make all labels the same width
+  document.querySelectorAll('.hour-marker .label').forEach((label) => {
+    label.style.width = `${maxLabelWidth}px`;
+  });
+
+  dayEls[0].style.paddingLeft = `${maxLabelWidth + 10}px`;
 
   deleteFirstHack();
 }

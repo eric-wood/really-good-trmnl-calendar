@@ -1024,12 +1024,15 @@
   };
 
   // js/hourly_view.js
+  var backgrounds = [10, 30, 60];
   var renderHourlyView = (days, startDate, format) => {
     const daysContainer = document.querySelector(".days");
     const dayTemplate = template2("#day-template");
     const eventTemplate = template2("#hourly-event");
     const isFull = format === "full";
-    const weekWindow = minMaxHour(days.flatMap(({ events }) => events));
+    const allEvents = days.flatMap(({ events }) => events);
+    const numCalendars = new Set(allEvents.map(({ calendarIndex }) => calendarIndex)).size;
+    const weekWindow = minMaxHour(allEvents);
     const numHours = weekWindow.numHours;
     const startTime = weekWindow.min;
     const endTime = weekWindow.max;
@@ -1058,6 +1061,9 @@
           name: event.name,
           durationString: event.durationString
         });
+        if (numCalendars > 1) {
+          eventEl.querySelector(".stripe").classList.add(`bg--gray-${backgrounds[event.calendarIndex]}`);
+        }
         eventsContainer.appendChild(eventEl);
       });
       return dayEl;
@@ -1068,12 +1074,23 @@
     const startPx = eventDimensions.top - dayDimensions.top;
     const height = eventDimensions.height;
     const pxPerHour = height / numHours;
+    let maxLabelWidth = 0;
     for (let i = 0; i < numHours; i += 1) {
       const hour = startTime.getHours();
       startTime.setHours(startTime.getHours() + 1);
       const y = i * pxPerHour + startPx;
-      daysContainer.appendChild(hourDivider(y, hour));
+      const divider = hourDivider(y, hour);
+      daysContainer.appendChild(divider);
+      const label = divider.querySelector(".label");
+      const labelWidth = label.getBoundingClientRect().width;
+      if (labelWidth > maxLabelWidth) {
+        maxLabelWidth = labelWidth;
+      }
     }
+    document.querySelectorAll(".hour-marker .label").forEach((label) => {
+      label.style.width = `${maxLabelWidth}px`;
+    });
+    dayEls[0].style.paddingLeft = `${maxLabelWidth + 10}px`;
     deleteFirstHack();
   };
   var hourDivider = (y, hour) => {

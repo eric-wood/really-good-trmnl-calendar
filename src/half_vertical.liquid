@@ -19,6 +19,23 @@
     </div>
   </div>
 </template>
+
+<template id="hour-marker-template">
+  <div class="hour-marker" style="top: {{ y }}px">
+    <div class="divider"></div>
+    <div class="label label--small bg--white">{{ hour }}</div>
+  </div>
+</template>
+
+<template id="hourly-event">
+  <div class="hourly-event bg--white rounded--xsmall" style="top: {{ top }}px; bottom: {{ bottom }}px;">
+    <div class="label" data-value-fit="true">{{ name }}</div>
+    <div>
+      <span class="label label--small">{{ durationString }}</span>
+    </div>
+    <div class="stripe"></div>
+  </div>
+</template>
 {% endraw %}
 
 <div class="layout layout--col layout--stretch layout--left">
