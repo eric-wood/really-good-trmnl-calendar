@@ -921,6 +921,25 @@
     };
   };
 
+  // js/util.js
+  var deleteFirstHack = () => {
+    const toDelete = document.querySelectorAll(".delete-first")[0];
+    toDelete?.remove();
+  };
+  var verticalDivider = () => {
+    const divider = document.createElement("div");
+    divider.classList.add("divider--v");
+    divider.classList.add("delete-first");
+    return divider;
+  };
+  var hideStuff2 = (layout) => {
+    document.querySelectorAll("[data-layout]").forEach((el) => {
+      if (el.dataset.layout !== layout) {
+        el.remove();
+      }
+    });
+  };
+
   // js/list_view.js
   var renderListView = (days, format) => {
     const daysContainer = document.querySelector(".days");
@@ -966,21 +985,58 @@
       }
       heightBudget -= dayEl.getBoundingClientRect().height;
     });
-    const toDelete = document.querySelectorAll(".delete-first")[0];
-    toDelete?.remove();
+    deleteFirstHack();
+    hideStuff("list");
   };
-  var verticalDivider = () => {
-    const divider = document.createElement("div");
-    divider.classList.add("divider--v");
-    divider.classList.add("delete-first");
-    return divider;
+
+  // js/hourly_view.js
+  var renderHourlyView = (days, format) => {
+    const daysContainer = document.querySelector(".days");
+    const dayTemplate = template2("#day-template");
+    const eventTemplate = template2("#event-template");
+    const isFull = format === "full";
+    const numHours = 12;
+    const startTime = /* @__PURE__ */ new Date();
+    startTime.setMinutes(0);
+    startTime.setSeconds(0);
+    startTime.setMilliseconds(0);
+    const dayEls = days.map((day) => {
+      const dayEl = dayTemplate(day);
+      if (isFull) {
+        daysContainer.appendChild(verticalDivider());
+      }
+      daysContainer.appendChild(dayEl);
+      return dayEl;
+    });
+    const eventDimensions = dayEls[0].querySelector(".events").getBoundingClientRect();
+    const startPx = eventDimensions.top;
+    const height = eventDimensions.height;
+    const pxPerHour = height / numHours;
+    for (let i = 0; i < numHours; i += 1) {
+      const hour = startTime.getHours();
+      startTime.setHours(startTime.getHours() + 1);
+      const y = i * pxPerHour + startPx;
+      daysContainer.appendChild(hourDivider(y, hour));
+    }
+    deleteFirstHack();
+    hideStuff2("hourly");
+  };
+  var hourDivider = (y, hour) => {
+    const compiled = template2("#hour-marker-template");
+    const el = compiled({ y, hour });
+    console.log(el);
+    return el;
   };
 
   // js/main.js
   window.renderEvents = (numDays, format) => {
     const events = prepEvents();
     const days = bucketEvents(events, /* @__PURE__ */ new Date(), numDays);
-    renderListView(days, format);
+    if (config.view_type === "list") {
+      renderListView(days, format);
+    } else {
+      renderHourlyView(days, format);
+    }
   };
 })();
 {% endraw %}

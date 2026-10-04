@@ -1,4 +1,5 @@
 import { template } from './template';
+import { deleteFirstHack, verticalDivider } from './util';
 
 export const renderListView = (days, format) => {
   const daysContainer = document.querySelector(".days");
@@ -62,14 +63,6 @@ export const renderListView = (days, format) => {
     heightBudget -= dayEl.getBoundingClientRect().height;
   });
 
-  // stupid hack to render dividers between elements; the first is marked for removal
-  const toDelete = document.querySelectorAll(".delete-first")[0];
-  toDelete?.remove();
-}
-
-const verticalDivider = () => {
-  const divider = document.createElement("div");
-  divider.classList.add("divider--v");
-  divider.classList.add("delete-first");
-  return divider;
+  deleteFirstHack();
+  hideStuff("list");
 }
