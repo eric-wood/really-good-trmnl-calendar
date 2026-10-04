@@ -81,6 +81,40 @@
       };
     });
   };
+  var normalizeDay = (d, reference) => {
+    const date = new Date(d);
+    date.setFullYear(reference.getFullYear(), reference.getMonth(), reference.getDate());
+    return date;
+  };
+  var minMaxHour = (events) => {
+    let min = Number.MAX_SAFE_INTEGER;
+    let max = -Infinity;
+    const today = /* @__PURE__ */ new Date();
+    events.forEach((event) => {
+      if (event.allDay) {
+        return;
+      }
+      const end = normalizeDay(event.end, today);
+      if (end > max) {
+        max = end;
+      }
+      const start = normalizeDay(event.start, today);
+      if (start < min) {
+        min = start;
+      }
+    });
+    if (max.getMinutes() > 0) {
+      max.setHours(max.getHours() + 1);
+    }
+    min.setMinutes(0);
+    min.setSeconds(0);
+    min.setMilliseconds(0);
+    max.setMinutes(0);
+    max.setSeconds(0);
+    max.setMilliseconds(0);
+    const numHours = max.getHours() - min.getHours();
+    return { min, max, numHours };
+  };
 
   // node_modules/lodash-es/_arrayEach.js
   function arrayEach(array, iteratee) {
@@ -990,26 +1024,48 @@
   };
 
   // js/hourly_view.js
-  var renderHourlyView = (days, format) => {
+  var renderHourlyView = (days, startDate, format) => {
     const daysContainer = document.querySelector(".days");
     const dayTemplate = template2("#day-template");
-    const eventTemplate = template2("#event-template");
+    const eventTemplate = template2("#hourly-event");
     const isFull = format === "full";
-    const numHours = 12;
-    const startTime = /* @__PURE__ */ new Date();
-    startTime.setMinutes(0);
-    startTime.setSeconds(0);
-    startTime.setMilliseconds(0);
-    const dayEls = days.map((day) => {
+    const weekWindow = minMaxHour(days.flatMap(({ events }) => events));
+    const numHours = weekWindow.numHours;
+    const startTime = weekWindow.min;
+    const endTime = weekWindow.max;
+    const dayEls = days.map((day, i) => {
+      startTime.setDate(startDate.getDate() + i);
+      endTime.setDate(startDate.getDate() + i);
       const dayEl = dayTemplate(day);
       if (isFull) {
         daysContainer.appendChild(verticalDivider());
       }
       daysContainer.appendChild(dayEl);
+      const eventsContainer = dayEl.querySelector(".events");
+      const eventDimensions2 = eventsContainer.getBoundingClientRect();
+      const startPx2 = eventDimensions2.top;
+      const height2 = eventDimensions2.height;
+      day.events.forEach((event) => {
+        if (event.allDay || !(event.start < endTime && event.end > startTime)) {
+          return;
+        }
+        const offset = height2 / (endTime - startTime);
+        const top = (event.start - startTime) * offset;
+        const bottom = height2 - (event.end - startTime) * offset;
+        const eventEl = eventTemplate({
+          top,
+          bottom,
+          name: event.name,
+          durationString: event.durationString
+        });
+        eventsContainer.appendChild(eventEl);
+      });
       return dayEl;
     });
+    hideStuff2("hourly");
+    const dayDimensions = dayEls[0].getBoundingClientRect();
     const eventDimensions = dayEls[0].querySelector(".events").getBoundingClientRect();
-    const startPx = eventDimensions.top;
+    const startPx = eventDimensions.top - dayDimensions.top;
     const height = eventDimensions.height;
     const pxPerHour = height / numHours;
     for (let i = 0; i < numHours; i += 1) {
@@ -1019,23 +1075,22 @@
       daysContainer.appendChild(hourDivider(y, hour));
     }
     deleteFirstHack();
-    hideStuff2("hourly");
   };
   var hourDivider = (y, hour) => {
     const compiled = template2("#hour-marker-template");
     const el = compiled({ y, hour });
-    console.log(el);
     return el;
   };
 
   // js/main.js
   window.renderEvents = (numDays, format) => {
     const events = prepEvents();
-    const days = bucketEvents(events, /* @__PURE__ */ new Date(), numDays);
+    const startDate = /* @__PURE__ */ new Date();
+    const days = bucketEvents(events, startDate, numDays);
     if (config.view_type === "list") {
       renderListView(days, format);
     } else {
-      renderHourlyView(days, format);
+      renderHourlyView(days, startDate, format);
     }
   };
 })();

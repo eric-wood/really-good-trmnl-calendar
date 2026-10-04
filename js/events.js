@@ -78,3 +78,56 @@ export const bucketEvents = (allEvents, startDate, numDays) => {
   });
 }
 
+// clones the passed in date and sets all date-related parameters to match
+// those of the reference date
+export const normalizeDay = (d, reference) => {
+  const date = new Date(d);
+  date.setFullYear(reference.getFullYear(), reference.getMonth(), reference.getDate());
+  return date;
+}
+
+// For a list of events across a series of days, figure out the earliest and latest
+// hour events begin and end on so the we can make informed decisions on what window
+// of time to show in the hourly views
+//
+// The returned Date objects are solely to represent time and the date portion can
+// be disregarded or updated on the fly if need be.
+export const minMaxHour = (events) => {
+  let min = Number.MAX_SAFE_INTEGER;
+  let max = -Infinity;
+
+  const today = new Date();
+
+  events.forEach((event) => {
+    if (event.allDay) {
+      return;
+    }
+
+    const end = normalizeDay(event.end, today);
+    if (end > max) {
+      max = end;
+    }
+
+    const start = normalizeDay(event.start, today);
+    if (start < min) {
+      min = start;
+    }
+  });
+
+  if (max.getMinutes() > 0) {
+    max.setHours(max.getHours() + 1);
+  }
+
+  min.setMinutes(0);
+  min.setSeconds(0);
+  min.setMilliseconds(0);
+
+  max.setMinutes(0);
+  max.setSeconds(0);
+  max.setMilliseconds(0);
+
+  const numHours = max.getHours() - min.getHours();
+
+  return { min, max, numHours };
+}
+

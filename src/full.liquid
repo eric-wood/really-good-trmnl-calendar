@@ -26,6 +26,15 @@
     <div class="label label--small bg--white">{{ hour }}</div>
   </div>
 </template>
+
+<template id="hourly-event">
+  <div class="hourly-event bg--white rounded--xsmall" style="top: {{ top }}px; bottom: {{ bottom }}px;">
+    <div class="label" data-value-fit="true">{{ name }}</div>
+    <div>
+      <span class="label label--small">{{ durationString }}</spank
+    </div>
+  </div>
+</template>
 {% endraw %}
 
 <style>
@@ -39,6 +48,20 @@
   position: absolute;
   transform: translateY(-50%);
   padding-right: 5px;
+}
+
+.events {
+  position: relative;
+  overflow: hidden;
+}
+
+.hourly-event {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding-left: 3px;
+  border: solid var(--bg-black-color) 1px;
+  z-index: 1;
 }
 </style>
 

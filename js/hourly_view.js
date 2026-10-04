@@ -1,20 +1,25 @@
 import { template } from './template';
+import { minMaxHour } from './events';
 import { deleteFirstHack, verticalDivider, hideStuff } from './util';
 
-export const renderHourlyView = (days, format) => {
+export const renderHourlyView = (days, startDate, format) => {
   const daysContainer = document.querySelector(".days");
 
   const dayTemplate = template("#day-template");
-  const eventTemplate = template("#event-template");
+  const eventTemplate = template("#hourly-event");
   const isFull = format === "full";
 
-  const numHours = 12; // TODO: make configurable
-  const startTime = new Date();
-  startTime.setMinutes(0);
-  startTime.setSeconds(0);
-  startTime.setMilliseconds(0);
+  const weekWindow = minMaxHour(days.flatMap(({ events }) => events));
 
-  const dayEls = days.map((day) => {
+  // TODO: logic to handle when this duration is tiny; maybe set a min day size?
+  const numHours = weekWindow.numHours;
+  const startTime = weekWindow.min;
+  const endTime = weekWindow.max;
+
+  const dayEls = days.map((day, i) => {
+    startTime.setDate(startDate.getDate() + i);
+    endTime.setDate(startDate.getDate() + i);
+
     const dayEl = dayTemplate(day);
 
     if (isFull) {
@@ -23,11 +28,37 @@ export const renderHourlyView = (days, format) => {
     }
 
     daysContainer.appendChild(dayEl);
+    const eventsContainer = dayEl.querySelector('.events');
+    const eventDimensions = eventsContainer.getBoundingClientRect();
+    const startPx = eventDimensions.top;
+    const height = eventDimensions.height;
+
+    day.events.forEach((event) => {
+      if (event.allDay || !(event.start < endTime && event.end > startTime)) {
+        return;
+      }
+
+      const offset = height / (endTime - startTime);
+      const top = (event.start - startTime) * offset;
+      const bottom = height - (event.end - startTime) * offset;
+      const eventEl = eventTemplate({
+        top,
+        bottom,
+        name: event.name,
+        durationString: event.durationString,
+      });
+      eventsContainer.appendChild(eventEl)
+    });
+
     return dayEl;
   });
 
+  hideStuff("hourly");
+
+  const dayDimensions = dayEls[0].getBoundingClientRect();
   const eventDimensions = dayEls[0].querySelector('.events').getBoundingClientRect();
-  const startPx = eventDimensions.top;
+
+  const startPx = eventDimensions.top - dayDimensions.top;
   const height = eventDimensions.height;
   const pxPerHour = height / numHours;
 
@@ -39,12 +70,10 @@ export const renderHourlyView = (days, format) => {
   }
 
   deleteFirstHack();
-  hideStuff("hourly");
 }
 
 const hourDivider = (y, hour) => {
   const compiled = template("#hour-marker-template");
   const el = compiled({ y, hour });
-  console.log(el)
   return el
 }
