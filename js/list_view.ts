@@ -1,8 +1,15 @@
-import { template } from './template';
-import { deleteFirstHack, verticalDivider } from './util';
+import type { Day } from "@/events";
+import { Format } from "@/main";
+import { template } from "@/template";
+import { deleteFirstHack, hideStuff, verticalDivider } from "@/util";
 
-export const renderListView = (days, format) => {
+export const renderListView = (days: Day[], format: Format) => {
   const daysContainer = document.querySelector(".days");
+
+  if (!daysContainer) {
+    console.error("Unable to locate days container");
+    return;
+  }
 
   const dayTemplate = template("#day-template");
   const eventTemplate = template("#event-template");
@@ -31,6 +38,10 @@ export const renderListView = (days, format) => {
 
     let numEventsRendered = 0;
     const eventsContainer = dayEl.querySelector(".events");
+    if (!eventsContainer) {
+      console.error("Unable to locate events container");
+      return;
+    }
 
     // these are per-column in the full view, so reset them
     if (isFull) {
@@ -44,7 +55,7 @@ export const renderListView = (days, format) => {
       }
 
       const eventEl = eventTemplate(event);
-      eventsContainer.appendChild(eventEl)
+      eventsContainer.appendChild(eventEl);
       const deficit = heightBudget - dayEl.getBoundingClientRect().height;
 
       if (deficit < 0) {
@@ -65,4 +76,4 @@ export const renderListView = (days, format) => {
 
   deleteFirstHack();
   hideStuff("list");
-}
+};

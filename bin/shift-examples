@@ -16,10 +16,16 @@ const outDir = path.join(root, ".examples");
 const DAY = 24 * 60 * 60 * 1000;
 const toUTCDay = (y, m, d) => Date.UTC(y, m - 1, d);
 
-const [ay, am, ad] = fs.readFileSync(path.join(srcDir, "anchor-date"), "utf8").trim().split("-").map(Number);
+const [ay, am, ad] = fs
+  .readFileSync(path.join(srcDir, "anchor-date"), "utf8")
+  .trim()
+  .split("-")
+  .map(Number);
 const now = new Date();
 const shiftDays = Math.round(
-  (toUTCDay(now.getFullYear(), now.getMonth() + 1, now.getDate()) - toUTCDay(ay, am, ad)) / DAY,
+  (toUTCDay(now.getFullYear(), now.getMonth() + 1, now.getDate()) -
+    toUTCDay(ay, am, ad)) /
+    DAY,
 );
 
 const pad = (n) => String(n).padStart(2, "0");
@@ -34,8 +40,9 @@ fs.mkdirSync(outDir);
 for (const file of fs.readdirSync(srcDir).filter((f) => f.endsWith(".json"))) {
   const json = fs.readFileSync(path.join(srcDir, file), "utf8");
   // any string value that starts with a YYYY-MM-DD date
-  const shifted = json.replace(/"(\d{4})-(\d{2})-(\d{2})(T[^"]*)?"/g, (_, y, m, d, rest = "") =>
-    `"${shiftDate(+y, +m, +d)}${rest}"`,
+  const shifted = json.replace(
+    /"(\d{4})-(\d{2})-(\d{2})(T[^"]*)?"/g,
+    (_, y, m, d, rest = "") => `"${shiftDate(+y, +m, +d)}${rest}"`,
   );
   fs.writeFileSync(path.join(outDir, file), shifted);
 }

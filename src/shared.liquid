@@ -20,7 +20,7 @@
 <script>
 {% raw %}
 (() => {
-  // js/events.js
+  // js/events.ts
   var fullDay = 60 * 60 * 24 * 1e3;
   var formatTimeDuration = (startDate, endDate, allDay) => {
     const formatTime = (d) => d.toLocaleTimeString("en-US", {
@@ -41,38 +41,47 @@
     window.config.calendar_3_name
   ];
   var prepEvents = () => {
-    const events = window.rawEvents.flatMap((calendarEvents, calendarIndex) => {
-      const calendarName = calendarNames[calendarIndex] || `Calendar ${calendarIndex + 1}`;
-      return (calendarEvents ?? []).map((event) => {
-        const start = new Date(event.DTSTART);
-        const end = new Date(event.DTEND);
-        const name = event.SUMMARY;
-        const allDay = end - start >= fullDay;
-        const durationString = formatTimeDuration(start, end, allDay);
-        return {
-          start,
-          end,
-          durationString,
-          name,
-          allDay,
-          calendarIndex,
-          calendarName
-        };
-      });
-    });
+    const events = window.rawEvents.flatMap(
+      (calendarEvents, calendarIndex) => {
+        const calendarName = calendarNames[calendarIndex] || `Calendar ${calendarIndex + 1}`;
+        return (calendarEvents ?? []).map((event) => {
+          const start = new Date(event.DTSTART);
+          const end = new Date(event.DTEND);
+          const name = event.SUMMARY;
+          const allDay = end.valueOf() - start.valueOf() >= fullDay;
+          const durationString = formatTimeDuration(start, end, allDay);
+          return {
+            start,
+            end,
+            durationString,
+            name,
+            allDay,
+            calendarIndex,
+            calendarName
+          };
+        });
+      }
+    );
     return events;
   };
   var bucketEvents = (allEvents, startDate, numDays) => {
     startDate.setHours(0, 0, 0, 0);
-    const sortedEvents = [...allEvents].sort((a, b) => a.start - b.start);
+    const sortedEvents = [...allEvents].sort(
+      (a, b) => a.start.valueOf() - b.start.valueOf()
+    );
     return [...Array(numDays).keys()].map((i) => {
       const date = new Date(startDate);
       date.setDate(date.getDate() + i);
       const endDate = new Date(date);
       endDate.setDate(endDate.getDate() + 1);
-      const events = sortedEvents.filter(({ start, end }) => start < endDate && end > date);
+      const events = sortedEvents.filter(
+        ({ start, end }) => start < endDate && end > date
+      );
       const dayOfWeek = date.toLocaleDateString("en-US", { weekday: "long" });
-      const dateString = date.toLocaleDateString("en-US", { month: "numeric", day: "numeric" });
+      const dateString = date.toLocaleDateString("en-US", {
+        month: "numeric",
+        day: "numeric"
+      });
       return {
         date,
         dayOfWeek,
@@ -83,12 +92,17 @@
   };
   var normalizeDay = (d, reference) => {
     const date = new Date(d);
-    date.setFullYear(reference.getFullYear(), reference.getMonth(), reference.getDate());
+    date.setFullYear(
+      reference.getFullYear(),
+      reference.getMonth(),
+      reference.getDate()
+    );
     return date;
   };
   var minMaxHour = (events) => {
-    let min = Number.MAX_SAFE_INTEGER;
-    let max = -Infinity;
+    let min = /* @__PURE__ */ new Date();
+    min.setFullYear(min.getFullYear() + 100);
+    let max = /* @__PURE__ */ new Date(0);
     const today = /* @__PURE__ */ new Date();
     events.forEach((event) => {
       if (event.allDay) {
@@ -943,9 +957,14 @@
   }
   var template_default = template;
 
-  // js/template.js
+  // js/template.ts
   var template2 = (selector) => {
-    const raw = document.querySelector(selector).innerHTML;
+    const el = document.querySelector(selector);
+    if (!el) {
+      console.error(`unable to locate template ${selector}`);
+      return;
+    }
+    const raw = el.innerHTML;
     const compiled = template_default(raw, { interpolate: /{{([\s\S]+?)}}/g });
     return (...args) => {
       const html = compiled(...args);
@@ -955,7 +974,7 @@
     };
   };
 
-  // js/util.js
+  // js/util.ts
   var deleteFirstHack = () => {
     const toDelete = document.querySelectorAll(".delete-first")[0];
     toDelete?.remove();
@@ -966,17 +985,24 @@
     divider.classList.add("delete-first");
     return divider;
   };
-  var hideStuff2 = (layout) => {
+  var hideStuff = (layout) => {
     document.querySelectorAll("[data-layout]").forEach((el) => {
+      if (!(el instanceof HTMLElement)) {
+        return;
+      }
       if (el.dataset.layout !== layout) {
         el.remove();
       }
     });
   };
 
-  // js/list_view.js
+  // js/list_view.ts
   var renderListView = (days, format) => {
     const daysContainer = document.querySelector(".days");
+    if (!daysContainer) {
+      console.error("Unable to locate days container");
+      return;
+    }
     const dayTemplate = template2("#day-template");
     const eventTemplate = template2("#event-template");
     const isFull = format === "full";
@@ -996,6 +1022,10 @@
       daysContainer.appendChild(dayEl);
       let numEventsRendered = 0;
       const eventsContainer = dayEl.querySelector(".events");
+      if (!eventsContainer) {
+        console.error("Unable to locate events container");
+        return;
+      }
       if (isFull) {
         continueRender = true;
         heightBudget = daysContainer.getBoundingClientRect().height;
@@ -1023,54 +1053,150 @@
     hideStuff("list");
   };
 
-  // js/hourly_view.js
-  var backgrounds = [10, 30, 60];
-  var renderHourlyView = (days, startDate, format) => {
-    const daysContainer = document.querySelector(".days");
-    const dayTemplate = template2("#day-template");
-    const eventTemplate = template2("#hourly-event");
-    const isFull = format === "full";
-    const allEvents = days.flatMap(({ events }) => events);
-    const numCalendars = new Set(allEvents.map(({ calendarIndex }) => calendarIndex)).size;
-    const weekWindow = minMaxHour(allEvents);
-    const numHours = weekWindow.numHours;
-    const startTime = weekWindow.min;
-    const endTime = weekWindow.max;
-    const dayEls = days.map((day, i) => {
-      startTime.setDate(startDate.getDate() + i);
-      endTime.setDate(startDate.getDate() + i);
-      const dayEl = dayTemplate(day);
-      if (isFull) {
-        daysContainer.appendChild(verticalDivider());
+  // js/component.ts
+  var Component = class {
+    static template = "";
+    t;
+    props;
+    constructor(props) {
+      this.t = template2(this.constructor.template);
+      this.props = props;
+    }
+    getProps() {
+      return this.props;
+    }
+    postRender(_el) {
+    }
+    render(container) {
+      if (!this.t) {
+        console.error("template not defined, somehow");
+        return;
       }
-      daysContainer.appendChild(dayEl);
-      const eventsContainer = dayEl.querySelector(".events");
-      const eventDimensions2 = eventsContainer.getBoundingClientRect();
-      const startPx2 = eventDimensions2.top;
-      const height2 = eventDimensions2.height;
+      const el = this.t(this.getProps());
+      container.appendChild(el);
+      this.postRender(el);
+      return el;
+    }
+  };
+
+  // js/components/hourly/event.ts
+  var backgrounds = [10, 30, 60];
+  var EventComponent = class extends Component {
+    static template = "#hourly-event";
+    constructor(props) {
+      super(props);
+    }
+    getProps() {
+      const event = this.props.event;
+      const offset = this.props.containerHeight / (this.props.endTime.valueOf() - this.props.startTime.valueOf());
+      const top = (event.start.valueOf() - this.props.startTime.valueOf()) * offset;
+      const bottom = this.props.containerHeight - (event.end.valueOf() - this.props.startTime.valueOf()) * offset;
+      const { name, durationString } = event;
+      const showBand = this.props.showBand;
+      return {
+        top,
+        bottom,
+        name,
+        durationString,
+        showBand
+      };
+    }
+    postRender(el) {
+      if (this.props.showBand) {
+        const calendarIndex = this.props.event.calendarIndex;
+        el.querySelector(".stripe").classList.add(
+          `bg--gray-${backgrounds[calendarIndex]}`
+        );
+      }
+    }
+  };
+
+  // js/components/hourly/day.ts
+  var DayComponent = class extends Component {
+    static template = "#day-template";
+    constructor(props) {
+      super(props);
+    }
+    getProps() {
+      const { dayOfWeek, dateString } = this.props.day;
+      return {
+        dayOfWeek,
+        dateString
+      };
+    }
+    postRender(el) {
+      const { day, startTime, endTime, numCalendars } = this.props;
+      const eventsContainer = el.querySelector(".events");
+      const height = eventsContainer.getBoundingClientRect().height;
       day.events.forEach((event) => {
         if (event.allDay || !(event.start < endTime && event.end > startTime)) {
           return;
         }
-        const offset = height2 / (endTime - startTime);
-        const top = (event.start - startTime) * offset;
-        const bottom = height2 - (event.end - startTime) * offset;
-        const eventEl = eventTemplate({
-          top,
-          bottom,
-          name: event.name,
-          durationString: event.durationString
+        const eventComponent = new EventComponent({
+          event,
+          containerHeight: height,
+          startTime,
+          endTime,
+          showBand: numCalendars > 1
         });
-        if (numCalendars > 1) {
-          eventEl.querySelector(".stripe").classList.add(`bg--gray-${backgrounds[event.calendarIndex]}`);
-        }
-        eventsContainer.appendChild(eventEl);
+        eventComponent.render(eventsContainer);
       });
-      return dayEl;
+    }
+  };
+
+  // js/components/hourly/marker.ts
+  var MarkerComponent = class extends Component {
+    static template = "#hour-marker-template";
+    getProps() {
+      const { y, hour } = this.props;
+      return { y, hour };
+    }
+  };
+
+  // js/hourly_view.ts
+  var renderHourlyView = (days, startDate, format) => {
+    const daysContainer = document.querySelector(".days");
+    const isFull = format === "full";
+    const allEvents = days.flatMap(({ events }) => events);
+    const numCalendars = new Set(
+      allEvents.map(({ calendarIndex }) => calendarIndex)
+    ).size;
+    const weekWindow = minMaxHour(allEvents);
+    const numHours = weekWindow.numHours;
+    const startTime = weekWindow.min;
+    const endTime = weekWindow.max;
+    days.forEach((day, i) => {
+      startTime.setDate(startDate.getDate() + i);
+      endTime.setDate(startDate.getDate() + i);
+      if (isFull) {
+        daysContainer.appendChild(verticalDivider());
+      }
+      const dayComponent = new DayComponent({
+        day,
+        startTime,
+        endTime,
+        numCalendars
+      });
+      dayComponent.render(daysContainer);
     });
-    hideStuff2("hourly");
-    const dayDimensions = dayEls[0].getBoundingClientRect();
-    const eventDimensions = dayEls[0].querySelector(".events").getBoundingClientRect();
+    const firstDayEl = daysContainer.querySelector(".day");
+    hideStuff("hourly");
+    drawLabels({ firstDayEl, numHours, startTime, daysContainer });
+    deleteFirstHack();
+  };
+  var drawLabels = ({
+    firstDayEl,
+    numHours,
+    startTime,
+    daysContainer
+  }) => {
+    const dayDimensions = firstDayEl.getBoundingClientRect();
+    const eventsContainer = firstDayEl.querySelector(".events");
+    if (!eventsContainer) {
+      console.error("unable to locate .events in day");
+      return;
+    }
+    const eventDimensions = eventsContainer.getBoundingClientRect();
     const startPx = eventDimensions.top - dayDimensions.top;
     const height = eventDimensions.height;
     const pxPerHour = height / numHours;
@@ -1079,8 +1205,8 @@
       const hour = startTime.getHours();
       startTime.setHours(startTime.getHours() + 1);
       const y = i * pxPerHour + startPx;
-      const divider = hourDivider(y, hour);
-      daysContainer.appendChild(divider);
+      const marker = new MarkerComponent({ y, hour });
+      const divider = marker.render(daysContainer);
       const label = divider.querySelector(".label");
       const labelWidth = label.getBoundingClientRect().width;
       if (labelWidth > maxLabelWidth) {
@@ -1088,23 +1214,20 @@
       }
     }
     document.querySelectorAll(".hour-marker .label").forEach((label) => {
+      if (!(label instanceof HTMLElement)) {
+        return;
+      }
       label.style.width = `${maxLabelWidth}px`;
     });
-    dayEls[0].style.paddingLeft = `${maxLabelWidth + 10}px`;
-    deleteFirstHack();
-  };
-  var hourDivider = (y, hour) => {
-    const compiled = template2("#hour-marker-template");
-    const el = compiled({ y, hour });
-    return el;
+    firstDayEl.style.paddingLeft = `${maxLabelWidth + 10}px`;
   };
 
-  // js/main.js
+  // js/main.ts
   window.renderEvents = (numDays, format) => {
     const events = prepEvents();
     const startDate = /* @__PURE__ */ new Date();
     const days = bucketEvents(events, startDate, numDays);
-    if (config.view_type === "list") {
+    if (window.config.view_type === "list") {
       renderListView(days, format);
     } else {
       renderHourlyView(days, startDate, format);

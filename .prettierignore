@@ -1,0 +1,10 @@
+# generated
+src/shared.liquid
+_build/
+.examples/
+
+examples/
+
+package-lock.json
+
+src/settings.yml

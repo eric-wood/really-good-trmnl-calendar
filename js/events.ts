@@ -1,11 +1,35 @@
+export interface Event {
+  start: Date;
+  end: Date;
+  durationString: string;
+  name: string;
+  allDay: boolean;
+  calendarIndex: number;
+  calendarName: string;
+}
+
+export interface Day {
+  date: Date;
+  dayOfWeek: string;
+  dateString: string;
+  events: Event[];
+}
+
 const fullDay = 60 * 60 * 24 * 1000;
 
-const formatTimeDuration = (startDate, endDate, allDay) => {
-  const formatTime = (d) => d.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: window.config.time_format === '12',
-  }).toLowerCase();
+const formatTimeDuration = (
+  startDate: Date,
+  endDate: Date,
+  allDay: boolean,
+) => {
+  const formatTime = (d: Date) =>
+    d
+      .toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: window.config.time_format === "12",
+      })
+      .toLowerCase();
 
   if (allDay) {
     return "All day";
@@ -15,7 +39,7 @@ const formatTimeDuration = (startDate, endDate, allDay) => {
   const end = formatTime(endDate);
 
   return `${start} - ${end}`;
-}
+};
 
 // spelled out (not built from the index) so `trmnlp lint` sees the fields used
 const calendarNames = [
@@ -27,36 +51,45 @@ const calendarNames = [
 // put the events into a friendlier format!
 // window.rawEvents is one array per calendar; null for missing/failed ones
 export const prepEvents = () => {
-  const events = window.rawEvents.flatMap((calendarEvents, calendarIndex) => {
-    const calendarName = calendarNames[calendarIndex] || `Calendar ${calendarIndex + 1}`;
+  const events = window.rawEvents.flatMap(
+    (calendarEvents, calendarIndex): Event[] => {
+      const calendarName =
+        calendarNames[calendarIndex] || `Calendar ${calendarIndex + 1}`;
 
-    return (calendarEvents ?? []).map((event) => {
-      const start = new Date(event.DTSTART);
-      const end = new Date(event.DTEND);
-      const name = event.SUMMARY;
+      return (calendarEvents ?? []).map((event) => {
+        const start = new Date(event.DTSTART);
+        const end = new Date(event.DTEND);
+        const name = event.SUMMARY;
 
-      const allDay = end - start >= fullDay;
-      const durationString = formatTimeDuration(start, end, allDay);
+        const allDay = end.valueOf() - start.valueOf() >= fullDay;
+        const durationString = formatTimeDuration(start, end, allDay);
 
-      return {
-        start,
-        end,
-        durationString,
-        name,
-        allDay,
-        calendarIndex,
-        calendarName,
-      };
-    });
-  });
+        return {
+          start,
+          end,
+          durationString,
+          name,
+          allDay,
+          calendarIndex,
+          calendarName,
+        };
+      });
+    },
+  );
   return events;
-}
+};
 
-export const bucketEvents = (allEvents, startDate, numDays) => {
+export const bucketEvents = (
+  allEvents: Event[],
+  startDate: Date,
+  numDays: number,
+): Day[] => {
   startDate.setHours(0, 0, 0, 0);
 
   // sort once up front; filter below preserves order within each day
-  const sortedEvents = [...allEvents].sort((a, b) => a.start - b.start);
+  const sortedEvents = [...allEvents].sort(
+    (a, b) => a.start.valueOf() - b.start.valueOf(),
+  );
 
   return [...Array(numDays).keys()].map((i) => {
     const date = new Date(startDate);
@@ -65,9 +98,14 @@ export const bucketEvents = (allEvents, startDate, numDays) => {
     const endDate = new Date(date);
     endDate.setDate(endDate.getDate() + 1);
 
-    const events = sortedEvents.filter(({ start, end }) => start < endDate && end > date);
+    const events = sortedEvents.filter(
+      ({ start, end }) => start < endDate && end > date,
+    );
     const dayOfWeek = date.toLocaleDateString("en-US", { weekday: "long" });
-    const dateString = date.toLocaleDateString("en-US", { month: "numeric", day: "numeric" });
+    const dateString = date.toLocaleDateString("en-US", {
+      month: "numeric",
+      day: "numeric",
+    });
 
     return {
       date,
@@ -76,15 +114,19 @@ export const bucketEvents = (allEvents, startDate, numDays) => {
       events,
     };
   });
-}
+};
 
 // clones the passed in date and sets all date-related parameters to match
 // those of the reference date
-export const normalizeDay = (d, reference) => {
+export const normalizeDay = (d: Date, reference: Date) => {
   const date = new Date(d);
-  date.setFullYear(reference.getFullYear(), reference.getMonth(), reference.getDate());
+  date.setFullYear(
+    reference.getFullYear(),
+    reference.getMonth(),
+    reference.getDate(),
+  );
   return date;
-}
+};
 
 // For a list of events across a series of days, figure out the earliest and latest
 // hour events begin and end on so the we can make informed decisions on what window
@@ -92,9 +134,10 @@ export const normalizeDay = (d, reference) => {
 //
 // The returned Date objects are solely to represent time and the date portion can
 // be disregarded or updated on the fly if need be.
-export const minMaxHour = (events) => {
-  let min = Number.MAX_SAFE_INTEGER;
-  let max = -Infinity;
+export const minMaxHour = (events: Event[]) => {
+  let min = new Date();
+  min.setFullYear(min.getFullYear() + 100);
+  let max = new Date(0);
 
   const today = new Date();
 
@@ -129,5 +172,4 @@ export const minMaxHour = (events) => {
   const numHours = max.getHours() - min.getHours();
 
   return { min, max, numHours };
-}
-
+};
