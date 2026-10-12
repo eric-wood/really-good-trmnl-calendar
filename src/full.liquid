@@ -1,11 +1,21 @@
 {% raw %}
-<template id="day-template">
+<template id="day-template-hourly">
   <div class="flex flex--col gap stretch day">
     <div class="flex flex--between flex--left stretch-x">
       <span class="title">{{ dayOfWeek }}</span>
       <span class="title">{{ dateString }}</span>
     </div>
-    <div class="divider" data-layout="list"></div>
+    <div class="events flex flex--col gap--small stretch"></div>
+  </div>
+</template>
+
+<template id="day-template-list">
+  <div class="flex flex--col gap stretch day">
+    <div class="flex flex--between flex--left stretch-x">
+      <span class="title">{{ dayOfWeek }}</span>
+      <span class="title">{{ dateString }}</span>
+    </div>
+    <div class="divider"></div>
     <div class="events flex flex--col gap--small stretch"></div>
   </div>
 </template>
@@ -29,9 +39,9 @@
 
 <template id="hourly-event">
   <div class="hourly-event bg--white rounded--xsmall" style="top: {{ top }}px; bottom: {{ bottom }}px;">
-    <div class="label" data-value-fit="true">{{ name }}</div>
+    <div class="name label">{{ name }}</div>
     <div>
-      <span class="label label--small">{{ durationString }}</span>
+      <span class="time label label--small">{{ durationString }}</span>
     </div>
     <div class="stripe"></div>
   </div>
@@ -39,6 +49,14 @@
 {% endraw %}
 
 <style>
+.layout.hourly [data-layout="list"] {
+  display: none
+}
+
+.layout.list [data-layout="hourly"] {
+  display: none
+}
+
 .hour-marker {
   position: absolute;
   left: 0;
@@ -72,6 +90,15 @@
   bottom: 0;
   right: 0;
   width: 5px;
+}
+
+.hourly-event .label {
+  align-items: flex-start;
+}
+
+.hourly-event.single-line {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
 

@@ -4,6 +4,7 @@ export class Component<Props extends object = object> {
   static template = "";
   t: ((...args: any) => HTMLElement) | undefined;
   props: Props;
+  el: HTMLElement | null = null;
 
   constructor(props: Props) {
     this.t = template((this.constructor as typeof Component).template);
@@ -25,6 +26,7 @@ export class Component<Props extends object = object> {
     const el = this.t(this.getProps());
     container.appendChild(el);
     this.postRender(el);
+    this.el = el;
     return el;
   }
 }

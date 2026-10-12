@@ -27,13 +27,13 @@
       hour: "numeric",
       minute: "numeric",
       hour12: window.config.time_format === "12"
-    }).toLowerCase();
+    }).replace(/:00/, "").toLowerCase();
     if (allDay) {
       return "All day";
     }
-    const start = formatTime(startDate);
-    const end = formatTime(endDate);
-    return `${start} - ${end}`;
+    const start = formatTime(startDate).replace(/ \w+$/, "");
+    const end = formatTime(endDate).replace(/ (\w+)$/, "$1");
+    return `${start}-${end}`;
   };
   var calendarNames = [
     window.config.calendar_1_name,
@@ -985,16 +985,6 @@
     divider.classList.add("delete-first");
     return divider;
   };
-  var hideStuff = (layout) => {
-    document.querySelectorAll("[data-layout]").forEach((el) => {
-      if (!(el instanceof HTMLElement)) {
-        return;
-      }
-      if (el.dataset.layout !== layout) {
-        el.remove();
-      }
-    });
-  };
 
   // js/list_view.ts
   var renderListView = (days, format) => {
@@ -1003,7 +993,7 @@
       console.error("Unable to locate days container");
       return;
     }
-    const dayTemplate = template2("#day-template");
+    const dayTemplate = template2("#day-template-list");
     const eventTemplate = template2("#event-template");
     const isFull = format === "full";
     let heightBudget = daysContainer.getBoundingClientRect().height;
@@ -1050,7 +1040,6 @@
       heightBudget -= dayEl.getBoundingClientRect().height;
     });
     deleteFirstHack();
-    hideStuff("list");
   };
 
   // js/component.ts
@@ -1058,6 +1047,7 @@
     static template = "";
     t;
     props;
+    el = null;
     constructor(props) {
       this.t = template2(this.constructor.template);
       this.props = props;
@@ -1075,6 +1065,7 @@
       const el = this.t(this.getProps());
       container.appendChild(el);
       this.postRender(el);
+      this.el = el;
       return el;
     }
   };
@@ -1083,9 +1074,6 @@
   var backgrounds = [10, 30, 60];
   var EventComponent = class extends Component {
     static template = "#hourly-event";
-    constructor(props) {
-      super(props);
-    }
     getProps() {
       const event = this.props.event;
       const offset = this.props.containerHeight / (this.props.endTime.valueOf() - this.props.startTime.valueOf());
@@ -1104,19 +1092,44 @@
     postRender(el) {
       if (this.props.showBand) {
         const calendarIndex = this.props.event.calendarIndex;
-        el.querySelector(".stripe").classList.add(
-          `bg--gray-${backgrounds[calendarIndex]}`
-        );
+        const stripe = el.querySelector(".stripe");
+        stripe.classList.add(`bg--gray-${backgrounds[calendarIndex]}`);
+        const stripeWidth = stripe.getBoundingClientRect().width;
+        el.style.paddingRight = `${stripeWidth + 3}px`;
       }
     }
+    adjustFit() {
+      const timeEl = this.el.querySelector(".time");
+      const nameEl = this.el.querySelector(".name");
+      console.group();
+      console.log(this.props.event.name);
+      if (isOverflowingY(this.el)) {
+        this.el.classList.add("single-line");
+        console.log("collapse to single line");
+      }
+      if (isOverflowingY(this.el) || textWrapping(timeEl)) {
+        timeEl.remove();
+        console.log("remove time element");
+      }
+      if (isOverflowingY(this.el)) {
+        nameEl.classList.add("label--small");
+        console.log("smaller label");
+      }
+      console.groupEnd();
+    }
+  };
+  var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
+  var textWrapping = (el) => {
+    const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
+    const height = el.getBoundingClientRect().height;
+    console.log({ el, height, fontSize });
+    return height > fontSize * 2;
   };
 
   // js/components/hourly/day.ts
   var DayComponent = class extends Component {
-    static template = "#day-template";
-    constructor(props) {
-      super(props);
-    }
+    static template = "#day-template-hourly";
+    eventComponents = [];
     getProps() {
       const { dayOfWeek, dateString } = this.props.day;
       return {
@@ -1128,7 +1141,7 @@
       const { day, startTime, endTime, numCalendars } = this.props;
       const eventsContainer = el.querySelector(".events");
       const height = eventsContainer.getBoundingClientRect().height;
-      day.events.forEach((event) => {
+      this.eventComponents = day.events.map((event) => {
         if (event.allDay || !(event.start < endTime && event.end > startTime)) {
           return;
         }
@@ -1140,6 +1153,13 @@
           showBand: numCalendars > 1
         });
         eventComponent.render(eventsContainer);
+        return eventComponent;
+      }).filter(Boolean);
+    }
+    fitEvents() {
+      console.log(this.eventComponents);
+      this.eventComponents.forEach((event) => {
+        event.adjustFit();
       });
     }
   };
@@ -1165,7 +1185,7 @@
     const numHours = weekWindow.numHours;
     const startTime = weekWindow.min;
     const endTime = weekWindow.max;
-    days.forEach((day, i) => {
+    const dayComponents = days.map((day, i) => {
       startTime.setDate(startDate.getDate() + i);
       endTime.setDate(startDate.getDate() + i);
       if (isFull) {
@@ -1178,11 +1198,14 @@
         numCalendars
       });
       dayComponent.render(daysContainer);
+      return dayComponent;
     });
     const firstDayEl = daysContainer.querySelector(".day");
-    hideStuff("hourly");
     drawLabels({ firstDayEl, numHours, startTime, daysContainer });
     deleteFirstHack();
+    dayComponents.forEach((day) => {
+      day.fitEvents();
+    });
   };
   var drawLabels = ({
     firstDayEl,
@@ -1226,6 +1249,7 @@
   window.renderEvents = (numDays, format) => {
     const events = prepEvents();
     const startDate = /* @__PURE__ */ new Date();
+    document.querySelector(".layout").classList.add(format);
     const days = bucketEvents(events, startDate, numDays);
     if (window.config.view_type === "list") {
       renderListView(days, format);

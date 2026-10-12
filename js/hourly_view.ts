@@ -1,5 +1,5 @@
 import { minMaxHour } from "@/events";
-import { deleteFirstHack, verticalDivider, hideStuff } from "@/util";
+import { deleteFirstHack, verticalDivider } from "@/util";
 import type { Format } from "@/main";
 import type { Day } from "@/events";
 import { DayComponent } from "@/components/hourly/day";
@@ -25,7 +25,7 @@ export const renderHourlyView = (
   const startTime = weekWindow.min;
   const endTime = weekWindow.max;
 
-  days.forEach((day, i) => {
+  const dayComponents = days.map((day, i) => {
     startTime.setDate(startDate.getDate() + i);
     endTime.setDate(startDate.getDate() + i);
 
@@ -42,15 +42,18 @@ export const renderHourlyView = (
     });
 
     dayComponent.render(daysContainer);
+    return dayComponent;
   });
 
   const firstDayEl = daysContainer.querySelector(".day") as HTMLElement;
 
-  hideStuff("hourly");
-
   drawLabels({ firstDayEl, numHours, startTime, daysContainer });
 
   deleteFirstHack();
+
+  dayComponents.forEach((day) => {
+    day.fitEvents();
+  });
 };
 
 const drawLabels = ({

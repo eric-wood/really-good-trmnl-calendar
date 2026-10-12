@@ -29,16 +29,17 @@ const formatTimeDuration = (
         minute: "numeric",
         hour12: window.config.time_format === "12",
       })
+      .replace(/:00/, "")
       .toLowerCase();
 
   if (allDay) {
     return "All day";
   }
 
-  const start = formatTime(startDate);
-  const end = formatTime(endDate);
+  const start = formatTime(startDate).replace(/ \w+$/, "");
+  const end = formatTime(endDate).replace(/ (\w+)$/, "$1");
 
-  return `${start} - ${end}`;
+  return `${start}-${end}`;
 };
 
 // spelled out (not built from the index) so `trmnlp lint` sees the fields used

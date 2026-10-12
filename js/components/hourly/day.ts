@@ -10,11 +10,8 @@ interface DayProps {
 }
 
 export class DayComponent extends Component<DayProps> {
-  static template = "#day-template";
-
-  constructor(props: DayProps) {
-    super(props);
-  }
+  static template = "#day-template-hourly";
+  eventComponents: EventComponent[] = [];
 
   getProps() {
     const { dayOfWeek, dateString } = this.props.day;
@@ -31,20 +28,30 @@ export class DayComponent extends Component<DayProps> {
     const eventsContainer = el.querySelector(".events") as HTMLElement;
     const height = eventsContainer.getBoundingClientRect().height;
 
-    day.events.forEach((event) => {
-      if (event.allDay || !(event.start < endTime && event.end > startTime)) {
-        return;
-      }
+    this.eventComponents = day.events
+      .map((event) => {
+        if (event.allDay || !(event.start < endTime && event.end > startTime)) {
+          return;
+        }
 
-      const eventComponent = new EventComponent({
-        event,
-        containerHeight: height,
-        startTime,
-        endTime,
-        showBand: numCalendars > 1,
-      });
+        const eventComponent = new EventComponent({
+          event,
+          containerHeight: height,
+          startTime,
+          endTime,
+          showBand: numCalendars > 1,
+        });
 
-      eventComponent.render(eventsContainer);
+        eventComponent.render(eventsContainer);
+        return eventComponent;
+      })
+      .filter(Boolean);
+  }
+
+  fitEvents() {
+    console.log(this.eventComponents);
+    this.eventComponents.forEach((event) => {
+      event.adjustFit();
     });
   }
 }

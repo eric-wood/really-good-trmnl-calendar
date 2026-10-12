@@ -1,7 +1,7 @@
 import type { Day } from "@/events";
 import { Format } from "@/main";
 import { template } from "@/template";
-import { deleteFirstHack, hideStuff, verticalDivider } from "@/util";
+import { deleteFirstHack, verticalDivider } from "@/util";
 
 export const renderListView = (days: Day[], format: Format) => {
   const daysContainer = document.querySelector(".days");
@@ -11,7 +11,7 @@ export const renderListView = (days: Day[], format: Format) => {
     return;
   }
 
-  const dayTemplate = template("#day-template");
+  const dayTemplate = template("#day-template-list");
   const eventTemplate = template("#event-template");
   const isFull = format === "full";
 
@@ -75,5 +75,4 @@ export const renderListView = (days: Day[], format: Format) => {
   });
 
   deleteFirstHack();
-  hideStuff("list");
 };

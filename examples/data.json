@@ -1136,7 +1136,7 @@
       "DTSTAMP": "2026-09-30T10:33:24+00:00",
       "DTSTART": "2026-09-30T17:30:00-06:00",
       "SEQUENCE": "0",
-      "SUMMARY": "An event",
+      "SUMMARY": "An event with a really long name",
       "TRANSP": "OPAQUE",
       "UID": "FD22E82D-AE47-4635-B3B3-AF8998DF0C54",
       "0": null
