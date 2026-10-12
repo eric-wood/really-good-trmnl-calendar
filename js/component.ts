@@ -15,7 +15,7 @@ export class Component<Props extends object = object> {
     return this.props;
   }
 
-  postRender(_el: HTMLElement) {}
+  postRender() {}
 
   render(container: HTMLElement): HTMLElement {
     if (!this.t) {
@@ -24,9 +24,9 @@ export class Component<Props extends object = object> {
     }
 
     const el = this.t(this.getProps());
-    container.appendChild(el);
-    this.postRender(el);
     this.el = el;
+    container.appendChild(el);
+    this.postRender();
     return el;
   }
 }

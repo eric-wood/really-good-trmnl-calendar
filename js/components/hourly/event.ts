@@ -40,15 +40,15 @@ export class EventComponent extends Component<EventProps> {
     };
   }
 
-  postRender(el: HTMLElement) {
+  postRender() {
     if (this.props.showBand) {
       const calendarIndex = this.props.event.calendarIndex;
 
-      const stripe = el.querySelector(".stripe");
+      const stripe = this.el.querySelector(".stripe");
       stripe.classList.add(`bg--gray-${backgrounds[calendarIndex]}`);
 
       const stripeWidth = stripe.getBoundingClientRect().width;
-      el.style.paddingRight = `${stripeWidth + 3}px`;
+      this.el.style.paddingRight = `${stripeWidth + 3}px`;
     }
   }
 
@@ -56,23 +56,32 @@ export class EventComponent extends Component<EventProps> {
     const timeEl = this.el.querySelector(".time") as HTMLElement;
     const nameEl = this.el.querySelector(".name") as HTMLElement;
 
-    console.group();
-    console.log(this.props.event.name);
+    //console.group();
+    //console.log(this.props.event.name);
     if (isOverflowingY(this.el)) {
       this.el.classList.add("single-line");
-      console.log("collapse to single line");
+      //console.log("collapse to single line");
     }
 
     if (isOverflowingY(this.el) || textWrapping(timeEl)) {
-      timeEl.remove();
-      console.log("remove time element");
+      //timeEl.remove();
+      //console.log("remove time element");
     }
 
     if (isOverflowingY(this.el)) {
+      // if we're still overflowing on the Y axis let's lower the font size
       nameEl.classList.add("label--small");
-      console.log("smaller label");
+      //console.log("smaller label");
     }
-    console.groupEnd();
+
+    if (isOverflowingY(this.el)) {
+      // okay, we can't win here, the duration is shorter than we can render with text visible;
+      // we'll just set the height to be the minimum heigh possible to render the small text,
+      // even if it isn't technically accurate (this is how most calendar apps handle it)
+      const height = this.el.scrollHeight + 3;
+      this.el.style.height = `${height}px`;
+    }
+    //console.groupEnd();
   }
 }
 
@@ -83,6 +92,5 @@ const textWrapping = (el: HTMLElement) => {
   const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
   const height = el.getBoundingClientRect().height;
 
-  console.log({ el, height, fontSize });
   return height > fontSize * 2;
 };

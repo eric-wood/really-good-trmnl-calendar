@@ -22,10 +22,10 @@ export class DayComponent extends Component<DayProps> {
     };
   }
 
-  postRender(el: HTMLElement) {
+  postRender() {
     const { day, startTime, endTime, numCalendars } = this.props;
 
-    const eventsContainer = el.querySelector(".events") as HTMLElement;
+    const eventsContainer = this.el.querySelector(".events") as HTMLElement;
     const height = eventsContainer.getBoundingClientRect().height;
 
     this.eventComponents = day.events
@@ -49,7 +49,6 @@ export class DayComponent extends Component<DayProps> {
   }
 
   fitEvents() {
-    console.log(this.eventComponents);
     this.eventComponents.forEach((event) => {
       event.adjustFit();
     });

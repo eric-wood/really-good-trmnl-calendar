@@ -1055,7 +1055,7 @@
     getProps() {
       return this.props;
     }
-    postRender(_el) {
+    postRender() {
     }
     render(container) {
       if (!this.t) {
@@ -1063,9 +1063,9 @@
         return;
       }
       const el = this.t(this.getProps());
-      container.appendChild(el);
-      this.postRender(el);
       this.el = el;
+      container.appendChild(el);
+      this.postRender();
       return el;
     }
   };
@@ -1089,40 +1089,36 @@
         showBand
       };
     }
-    postRender(el) {
+    postRender() {
       if (this.props.showBand) {
         const calendarIndex = this.props.event.calendarIndex;
-        const stripe = el.querySelector(".stripe");
+        const stripe = this.el.querySelector(".stripe");
         stripe.classList.add(`bg--gray-${backgrounds[calendarIndex]}`);
         const stripeWidth = stripe.getBoundingClientRect().width;
-        el.style.paddingRight = `${stripeWidth + 3}px`;
+        this.el.style.paddingRight = `${stripeWidth + 3}px`;
       }
     }
     adjustFit() {
       const timeEl = this.el.querySelector(".time");
       const nameEl = this.el.querySelector(".name");
-      console.group();
-      console.log(this.props.event.name);
       if (isOverflowingY(this.el)) {
         this.el.classList.add("single-line");
-        console.log("collapse to single line");
       }
       if (isOverflowingY(this.el) || textWrapping(timeEl)) {
-        timeEl.remove();
-        console.log("remove time element");
       }
       if (isOverflowingY(this.el)) {
         nameEl.classList.add("label--small");
-        console.log("smaller label");
       }
-      console.groupEnd();
+      if (isOverflowingY(this.el)) {
+        const height = this.el.scrollHeight + 3;
+        this.el.style.height = `${height}px`;
+      }
     }
   };
   var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
   var textWrapping = (el) => {
     const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
     const height = el.getBoundingClientRect().height;
-    console.log({ el, height, fontSize });
     return height > fontSize * 2;
   };
 
@@ -1137,9 +1133,9 @@
         dateString
       };
     }
-    postRender(el) {
+    postRender() {
       const { day, startTime, endTime, numCalendars } = this.props;
-      const eventsContainer = el.querySelector(".events");
+      const eventsContainer = this.el.querySelector(".events");
       const height = eventsContainer.getBoundingClientRect().height;
       this.eventComponents = day.events.map((event) => {
         if (event.allDay || !(event.start < endTime && event.end > startTime)) {
@@ -1157,7 +1153,6 @@
       }).filter(Boolean);
     }
     fitEvents() {
-      console.log(this.eventComponents);
       this.eventComponents.forEach((event) => {
         event.adjustFit();
       });
