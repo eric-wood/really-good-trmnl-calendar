@@ -20,6 +20,9 @@ export interface Day {
 
 const fullDay = 60 * 60 * 24 * 1000;
 
+export const duration = (event: Event) =>
+  event.end.valueOf() - event.start.valueOf();
+
 const formatTimeDuration = (
   startDate: Date,
   endDate: Date,
@@ -122,10 +125,12 @@ export const bucketEvents = (
         sameStart.push(event);
       } else {
         const widthPercentage = 100 / sameStart.length;
-        sameStart.forEach((e, i) => {
-          e.widthPercentage = widthPercentage;
-          e.lane = i;
-        });
+        sameStart
+          .sort((a, b) => duration(b) - duration(a))
+          .forEach((e, i) => {
+            e.widthPercentage = widthPercentage;
+            e.lane = i;
+          });
         sameStart = [event];
       }
 

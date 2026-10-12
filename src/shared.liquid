@@ -22,6 +22,7 @@
 (() => {
   // js/events.ts
   var fullDay = 60 * 60 * 24 * 1e3;
+  var duration = (event) => event.end.valueOf() - event.start.valueOf();
   var formatTimeDuration = (startDate, endDate, allDay) => {
     const formatTime = (d) => d.toLocaleTimeString("en-US", {
       hour: "numeric",
@@ -91,7 +92,7 @@
           sameStart.push(event);
         } else {
           const widthPercentage = 100 / sameStart.length;
-          sameStart.forEach((e, i2) => {
+          sameStart.sort((a, b) => duration(b) - duration(a)).forEach((e, i2) => {
             e.widthPercentage = widthPercentage;
             e.lane = i2;
           });
