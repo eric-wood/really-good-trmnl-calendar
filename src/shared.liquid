@@ -1149,7 +1149,8 @@
     adjustFit() {
       const timeEl = this.el.querySelector(".time");
       const nameEl = this.el.querySelector(".name");
-      if (isOverflowingY(this.el) || textWrapping(timeEl)) {
+      if (textWrapping(timeEl)) {
+        this.el.classList.add("multi-line");
       }
       if (isOverflowingY(this.el)) {
         nameEl.classList.add("label--small");
@@ -1157,6 +1158,9 @@
       if (isOverflowingY(this.el)) {
         const height = this.el.scrollHeight + 3;
         this.el.style.height = `${height}px`;
+      }
+      if (isOverflowingY(this.el)) {
+        timeEl.remove();
       }
     }
   };

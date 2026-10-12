@@ -69,17 +69,13 @@ export class EventComponent extends Component<EventProps> {
     const timeEl = this.el.querySelector(".time") as HTMLElement;
     const nameEl = this.el.querySelector(".name") as HTMLElement;
 
-    //console.group();
-    //console.log(this.props.event.name);
-    if (isOverflowingY(this.el) || textWrapping(timeEl)) {
-      //timeEl.remove();
-      //console.log("remove time element");
+    if (textWrapping(timeEl)) {
+      this.el.classList.add("multi-line");
     }
 
     if (isOverflowingY(this.el)) {
       // if we're still overflowing on the Y axis let's lower the font size
       nameEl.classList.add("label--small");
-      //console.log("smaller label");
     }
 
     if (isOverflowingY(this.el)) {
@@ -89,6 +85,9 @@ export class EventComponent extends Component<EventProps> {
       const height = this.el.scrollHeight + 3;
       this.el.style.height = `${height}px`;
     }
-    //console.groupEnd();
+
+    if (isOverflowingY(this.el)) {
+      timeEl.remove();
+    }
   }
 }
