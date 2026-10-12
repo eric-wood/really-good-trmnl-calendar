@@ -7,6 +7,8 @@ export interface Event {
   calendarIndex: number;
   calendarName: string;
   depth: number;
+  widthPercentage: number;
+  lane: number;
 }
 
 export interface Day {
@@ -75,6 +77,8 @@ export const prepEvents = () => {
           calendarIndex,
           calendarName,
           depth: 0,
+          widthPercentage: 100,
+          lane: 0,
         };
       });
     },
@@ -107,14 +111,28 @@ export const bucketEvents = (
     );
 
     const parents: Event[] = [];
+    let sameStart: Event[] = [];
     events.forEach((event) => {
       if (event.allDay) {
         return;
       }
 
+      const firstSame = sameStart[0];
+      if (firstSame && firstSame.start.valueOf() === event.start.valueOf()) {
+        sameStart.push(event);
+      } else {
+        const widthPercentage = 100 / sameStart.length;
+        sameStart.forEach((e, i) => {
+          e.widthPercentage = widthPercentage;
+          e.lane = i;
+        });
+        sameStart = [event];
+      }
+
       const withinParents = parents.some(
         (parent) => event.start.valueOf() < parent.end.valueOf(),
       );
+
       if (withinParents) {
         // event is within parent still
         event.depth = parents.length;

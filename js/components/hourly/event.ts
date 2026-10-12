@@ -18,33 +18,39 @@ export class EventComponent extends Component<EventProps> {
   getProps() {
     const event = this.props.event;
 
-    const offset =
-      this.props.containerHeight /
-      (this.props.endTime.valueOf() - this.props.startTime.valueOf());
-    const top =
-      (event.start.valueOf() - this.props.startTime.valueOf()) * offset;
-    const bottom =
-      this.props.containerHeight -
-      (event.end.valueOf() - this.props.startTime.valueOf()) * offset -
-      1;
-
     const { name, durationString } = event;
-    const showBand = this.props.showBand;
-
-    // TODO: figure out how to skip render? should the parent filter?
 
     return {
-      top,
-      bottom,
       name,
       durationString,
-      showBand,
     };
   }
 
   postRender() {
-    if (this.props.showBand) {
-      const calendarIndex = this.props.event.calendarIndex;
+    const { event, containerHeight, startTime, endTime, showBand } = this.props;
+    const offset = containerHeight / (endTime.valueOf() - startTime.valueOf());
+    const top = (event.start.valueOf() - startTime.valueOf()) * offset;
+    const bottom =
+      containerHeight -
+      (event.end.valueOf() - startTime.valueOf()) * offset -
+      1;
+
+    // ensure the borders don't double up
+    if (event.lane > 0) {
+      this.el.style.borderLeft = "0";
+    }
+
+    this.el.style.top = `${top}px`;
+    this.el.style.bottom = `${bottom}px`;
+
+    if (event.widthPercentage !== 100) {
+      const left = event.lane * event.widthPercentage;
+      this.el.style.width = `${event.widthPercentage}%`;
+      this.el.style.left = `${left}%`;
+    }
+
+    if (showBand) {
+      const calendarIndex = event.calendarIndex;
 
       const stripe = this.el.querySelector(".stripe");
       stripe.classList.add(`bg--gray-${backgrounds[calendarIndex]}`);
@@ -53,8 +59,10 @@ export class EventComponent extends Component<EventProps> {
       this.el.style.paddingRight = `${stripeWidth + 3}px`;
     }
 
-    const offset = this.props.event.depth * 6;
-    this.el.style.left += `${offset}px`;
+    if (event.widthPercentage === 100) {
+      const offset = event.depth * 6;
+      this.el.style.left = `${offset}px`;
+    }
   }
 
   adjustFit() {
