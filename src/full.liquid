@@ -38,7 +38,7 @@
 </template>
 
 <template id="hourly-event">
-  <div class="hourly-event bg--white rounded--xsmall" style="top: {{ top }}px; bottom: {{ bottom }}px;">
+  <div class="hourly-event bg--white" style="top: {{ top }}px; bottom: {{ bottom }}px;">
     <div class="name label">{{ name }}</div>
     <div class="time label label--small">{{ durationString }}</div>
     <div class="stripe"></div>
@@ -78,7 +78,7 @@
   left: 0;
   right: 0;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   padding-left: 3px;
   border: solid var(--bg-black-color) 1px;
   z-index: 1;
@@ -94,11 +94,6 @@
 
 .hourly-event .label {
   align-items: flex-start;
-}
-
-.hourly-event.single-line {
-  flex-direction: row;
-  justify-content: space-between;
 }
 </style>
 

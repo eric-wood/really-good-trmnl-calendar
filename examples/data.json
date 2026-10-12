@@ -1,70 +1,79 @@
 {
-  "ical": [
-      {
-          "DTEND": "2026-10-14T00:00:00-06:00",
-          "DTSTAMP": "2026-10-12T16:12:11+00:00",
-          "DTSTART": "2026-10-11T00:00:00-06:00",
-          "SEQUENCE": "1",
-          "SUMMARY": "Multi-day starting from before today",
-          "TRANSP": "TRANSPARENT",
-          "UID": "3ad0834c-503a-4fe8-bab9-6c04df76c0cf"
-      },
-      {
-          "DTEND": "2026-10-26T00:00:00-06:00",
-          "DTSTAMP": "2026-10-12T16:11:35+00:00",
-          "DTSTART": "2026-10-12T00:00:00-06:00",
-          "SEQUENCE": "0",
-          "SUMMARY": "Multi-day ending a while from now",
-          "TRANSP": "TRANSPARENT",
-          "UID": "8f978d15-5a7f-4ea0-a5d2-c96b325d43db"
-      },
-      {
-          "DTEND": "2026-10-12T09:05:00-06:00",
-          "DTSTAMP": "2026-10-12T16:10:54+00:00",
-          "DTSTART": "2026-10-12T09:00:00-06:00",
-          "LOCATION": "My house",
-          "SEQUENCE": "0",
-          "SUMMARY": "Really short event",
-          "TRANSP": "OPAQUE",
-          "UID": "c06ef603-5a80-40da-b5ef-e3a599da37b7",
-          "0": null
-      },
-      {
-          "DTEND": "2026-10-12T11:15:00-06:00",
-          "DTSTAMP": "2026-10-12T16:12:46+00:00",
-          "DTSTART": "2026-10-12T11:00:00-06:00",
-          "LOCATION": "Computer",
-          "SEQUENCE": "0",
-          "SUMMARY": "Standup",
-          "TRANSP": "OPAQUE",
-          "UID": "30d75204-fcd4-466d-93ca-eb0ac12fc602"
-      },
-      {
-          "DTEND": "2026-10-12T13:00:00-06:00",
-          "DTSTAMP": "2026-10-12T16:13:00+00:00",
-          "DTSTART": "2026-10-12T12:00:00-06:00",
-          "SEQUENCE": "0",
-          "SUMMARY": "Lunch",
-          "TRANSP": "OPAQUE",
-          "UID": "2e5aab0f-8399-4148-9e71-7c8ee7aa796b"
-      },
-      {
-          "DTEND": "2026-10-12T21:00:00-06:00",
-          "DTSTAMP": "2026-10-12T16:13:48+00:00",
-          "DTSTART": "2026-10-12T13:00:00-06:00",
-          "SEQUENCE": "0",
-          "SUMMARY": "On-call",
-          "TRANSP": "OPAQUE",
-          "UID": "112c81f9-c155-4b38-8bc6-e11c23305bb5"
-      },
-      {
-          "DTEND": "2026-10-12T14:30:00-06:00",
-          "DTSTAMP": "2026-10-12T16:13:21+00:00",
-          "DTSTART": "2026-10-12T14:00:00-06:00",
-          "SEQUENCE": "0",
-          "SUMMARY": "These will conflict",
-          "TRANSP": "OPAQUE",
-          "UID": "83eeee1a-bb61-4a96-b9a3-2d4be0f7997b"
-      }
-  ]
+    "ical": [
+        {
+            "DTEND": "2026-10-14T00:00:00-06:00",
+            "DTSTAMP": "2026-10-12T16:12:11+00:00",
+            "DTSTART": "2026-10-11T00:00:00-06:00",
+            "SEQUENCE": "1",
+            "SUMMARY": "Multi-day starting from before today",
+            "TRANSP": "TRANSPARENT",
+            "UID": "3ad0834c-503a-4fe8-bab9-6c04df76c0cf"
+        },
+        {
+            "DTEND": "2026-10-26T00:00:00-06:00",
+            "DTSTAMP": "2026-10-12T16:11:35+00:00",
+            "DTSTART": "2026-10-12T00:00:00-06:00",
+            "SEQUENCE": "0",
+            "SUMMARY": "Multi-day ending a while from now",
+            "TRANSP": "TRANSPARENT",
+            "UID": "8f978d15-5a7f-4ea0-a5d2-c96b325d43db"
+        },
+        {
+            "DTEND": "2026-10-12T09:05:00-06:00",
+            "DTSTAMP": "2026-10-12T16:10:54+00:00",
+            "DTSTART": "2026-10-12T09:00:00-06:00",
+            "LOCATION": "My house",
+            "SEQUENCE": "0",
+            "SUMMARY": "Really short event",
+            "TRANSP": "OPAQUE",
+            "UID": "c06ef603-5a80-40da-b5ef-e3a599da37b7",
+            "0": null
+        },
+        {
+            "DTEND": "2026-10-12T11:15:00-06:00",
+            "DTSTAMP": "2026-10-12T16:12:46+00:00",
+            "DTSTART": "2026-10-12T11:00:00-06:00",
+            "LOCATION": "Computer",
+            "SEQUENCE": "0",
+            "SUMMARY": "Standup",
+            "TRANSP": "OPAQUE",
+            "UID": "30d75204-fcd4-466d-93ca-eb0ac12fc602"
+        },
+        {
+            "DTEND": "2026-10-12T13:00:00-06:00",
+            "DTSTAMP": "2026-10-12T16:13:00+00:00",
+            "DTSTART": "2026-10-12T12:00:00-06:00",
+            "SEQUENCE": "0",
+            "SUMMARY": "Lunch",
+            "TRANSP": "OPAQUE",
+            "UID": "2e5aab0f-8399-4148-9e71-7c8ee7aa796b"
+        },
+        {
+            "DTEND": "2026-10-12T16:00:00-06:00",
+            "DTSTAMP": "2026-10-12T18:36:31+00:00",
+            "DTSTART": "2026-10-12T13:00:00-06:00",
+            "SEQUENCE": "3",
+            "SUMMARY": "On-call",
+            "TRANSP": "OPAQUE",
+            "UID": "112c81f9-c155-4b38-8bc6-e11c23305bb5"
+        },
+        {
+            "DTEND": "2026-10-12T15:30:00-06:00",
+            "DTSTAMP": "2026-10-12T18:26:00+00:00",
+            "DTSTART": "2026-10-12T13:30:00-06:00",
+            "SEQUENCE": "3",
+            "SUMMARY": "These will conflict",
+            "TRANSP": "OPAQUE",
+            "UID": "83eeee1a-bb61-4a96-b9a3-2d4be0f7997b"
+        },
+        {
+            "DTEND": "2026-10-12T16:30:00-06:00",
+            "DTSTAMP": "2026-10-12T18:36:53+00:00",
+            "DTSTART": "2026-10-12T15:00:00-06:00",
+            "SEQUENCE": "4",
+            "SUMMARY": "So will these",
+            "TRANSP": "OPAQUE",
+            "UID": "8986aaf8-7a28-4b86-9f85-581965bc3a37"
+        }
+    ]
 }

@@ -1,5 +1,6 @@
 import { Component } from "@/component";
 import type { Event } from "@/events";
+import { isOverflowingY, textWrapping } from "@/util";
 
 const backgrounds = [10, 30, 60];
 
@@ -24,7 +25,8 @@ export class EventComponent extends Component<EventProps> {
       (event.start.valueOf() - this.props.startTime.valueOf()) * offset;
     const bottom =
       this.props.containerHeight -
-      (event.end.valueOf() - this.props.startTime.valueOf()) * offset;
+      (event.end.valueOf() - this.props.startTime.valueOf()) * offset -
+      1;
 
     const { name, durationString } = event;
     const showBand = this.props.showBand;
@@ -50,6 +52,9 @@ export class EventComponent extends Component<EventProps> {
       const stripeWidth = stripe.getBoundingClientRect().width;
       this.el.style.paddingRight = `${stripeWidth + 3}px`;
     }
+
+    const offset = this.props.event.depth * 6;
+    this.el.style.left += `${offset}px`;
   }
 
   adjustFit() {
@@ -58,11 +63,6 @@ export class EventComponent extends Component<EventProps> {
 
     //console.group();
     //console.log(this.props.event.name);
-    if (isOverflowingY(this.el)) {
-      this.el.classList.add("single-line");
-      //console.log("collapse to single line");
-    }
-
     if (isOverflowingY(this.el) || textWrapping(timeEl)) {
       //timeEl.remove();
       //console.log("remove time element");
@@ -84,13 +84,3 @@ export class EventComponent extends Component<EventProps> {
     //console.groupEnd();
   }
 }
-
-const isOverflowingY = (el: HTMLElement) =>
-  el.scrollHeight > el.getBoundingClientRect().height;
-
-const textWrapping = (el: HTMLElement) => {
-  const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
-  const height = el.getBoundingClientRect().height;
-
-  return height > fontSize * 2;
-};

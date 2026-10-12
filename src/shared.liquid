@@ -57,7 +57,8 @@
             name,
             allDay,
             calendarIndex,
-            calendarName
+            calendarName,
+            depth: 0
           };
         });
       }
@@ -77,6 +78,22 @@
       const events = sortedEvents.filter(
         ({ start, end }) => start < endDate && end > date
       );
+      const parents = [];
+      events.forEach((event) => {
+        if (event.allDay) {
+          return;
+        }
+        const withinParents = parents.some(
+          (parent) => event.start.valueOf() < parent.end.valueOf()
+        );
+        if (withinParents) {
+          event.depth = parents.length;
+          parents.push(event);
+        } else {
+          parents.pop();
+        }
+        parents.push(event);
+      });
       const dayOfWeek = date.toLocaleDateString("en-US", { weekday: "long" });
       const dateString = date.toLocaleDateString("en-US", {
         month: "numeric",
@@ -985,6 +1002,12 @@
     divider.classList.add("delete-first");
     return divider;
   };
+  var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
+  var textWrapping = (el) => {
+    const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
+    const height = el.getBoundingClientRect().height;
+    return height > fontSize * 2;
+  };
 
   // js/list_view.ts
   var renderListView = (days, format) => {
@@ -1078,7 +1101,7 @@
       const event = this.props.event;
       const offset = this.props.containerHeight / (this.props.endTime.valueOf() - this.props.startTime.valueOf());
       const top = (event.start.valueOf() - this.props.startTime.valueOf()) * offset;
-      const bottom = this.props.containerHeight - (event.end.valueOf() - this.props.startTime.valueOf()) * offset;
+      const bottom = this.props.containerHeight - (event.end.valueOf() - this.props.startTime.valueOf()) * offset - 1;
       const { name, durationString } = event;
       const showBand = this.props.showBand;
       return {
@@ -1097,13 +1120,12 @@
         const stripeWidth = stripe.getBoundingClientRect().width;
         this.el.style.paddingRight = `${stripeWidth + 3}px`;
       }
+      const offset = this.props.event.depth * 6;
+      this.el.style.left += `${offset}px`;
     }
     adjustFit() {
       const timeEl = this.el.querySelector(".time");
       const nameEl = this.el.querySelector(".name");
-      if (isOverflowingY(this.el)) {
-        this.el.classList.add("single-line");
-      }
       if (isOverflowingY(this.el) || textWrapping(timeEl)) {
       }
       if (isOverflowingY(this.el)) {
@@ -1114,12 +1136,6 @@
         this.el.style.height = `${height}px`;
       }
     }
-  };
-  var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
-  var textWrapping = (el) => {
-    const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
-    const height = el.getBoundingClientRect().height;
-    return height > fontSize * 2;
   };
 
   // js/components/hourly/day.ts

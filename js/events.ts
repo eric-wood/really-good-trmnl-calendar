@@ -6,6 +6,7 @@ export interface Event {
   allDay: boolean;
   calendarIndex: number;
   calendarName: string;
+  depth: number;
 }
 
 export interface Day {
@@ -73,6 +74,7 @@ export const prepEvents = () => {
           allDay,
           calendarIndex,
           calendarName,
+          depth: 0,
         };
       });
     },
@@ -103,6 +105,27 @@ export const bucketEvents = (
     const events = sortedEvents.filter(
       ({ start, end }) => start < endDate && end > date,
     );
+
+    const parents: Event[] = [];
+    events.forEach((event) => {
+      if (event.allDay) {
+        return;
+      }
+
+      const withinParents = parents.some(
+        (parent) => event.start.valueOf() < parent.end.valueOf(),
+      );
+      if (withinParents) {
+        // event is within parent still
+        event.depth = parents.length;
+        parents.push(event);
+      } else {
+        parents.pop();
+      }
+
+      parents.push(event);
+    });
+
     const dayOfWeek = date.toLocaleDateString("en-US", { weekday: "long" });
     const dateString = date.toLocaleDateString("en-US", {
       month: "numeric",
