@@ -6,3 +6,6 @@ node_modules/
 
 # date-shifted copies of examples/ (bin/shift-examples)
 .examples/
+
+# plugin zip (bin/build)
+dist/

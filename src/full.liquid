@@ -5,6 +5,7 @@
       <span class="title">{{ dayOfWeek }}</span>
       <span class="title">{{ dateString }}</span>
     </div>
+    <div class="all-day-events"></div>
     <div class="events flex flex--col gap--small stretch"></div>
   </div>
 </template>
@@ -44,6 +45,14 @@
     <div class="stripe"></div>
   </div>
 </template>
+
+<template id="all-day-events-template">
+</template>
+<template id="all-day-event-template">
+  <div class="all-day-event">
+    <div class="label label--small">{{ name }}</div>
+  </div>
+</template>
 {% endraw %}
 
 <style>
@@ -55,6 +64,16 @@
   display: none
 }
 
+.layout.single-column .days {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* stacked days should size to content, not split the height evenly */
+.layout.single-column .day {
+  flex: none;
+}
+
 .hour-marker {
   position: absolute;
   left: 0;
@@ -64,7 +83,6 @@
 .hour-marker .label {
   position: absolute;
   transform: translateY(-50%);
-  /*padding-right: 5px;*/
   text-align: right;
 }
 
@@ -111,5 +129,5 @@
 </div>
 
 <script>
-  window.renderEvents(3, "full");
+  window.renderEvents("full");
 </script>

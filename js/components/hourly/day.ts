@@ -1,6 +1,7 @@
 import { Component } from "@/component";
 import type { Day } from "@/events";
 import { EventComponent } from "@/components/hourly/event";
+import { AllDayEventComponent } from "./all_day_event";
 
 interface DayProps {
   day: Day;

@@ -44,4 +44,20 @@ custom_fields:
     options:
       - 'Event list': list
       - 'Hourly': hourly
+    conditional_validation:
+      - when: hourly
+        hidden:
+        - single_column
     default: list
+  - keyname: num_days
+    field_type: number
+    name: Number of days
+    description: Number of days to display
+    min: 1
+    optional: true
+    default: 3
+  - keyname: single_column
+    field_type: boolean
+    name: Single Column
+    description: Use a single full-width column to display events
+    optional: true

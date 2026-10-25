@@ -1,3 +1,68 @@
 {
-  "ical": []
+    "ical": [
+        {
+            "DTEND": "2026-10-14T00:00:00-06:00",
+            "DTSTAMP": "2026-10-12T16:12:11+00:00",
+            "DTSTART": "2026-10-11T00:00:00-06:00",
+            "SEQUENCE": "1",
+            "SUMMARY": "Multi-day starting from before today",
+            "TRANSP": "TRANSPARENT",
+            "UID": "3ad0834c-503a-4fe8-bab9-6c04df76c0cf"
+        },
+        {
+            "DTEND": "2026-10-26T00:00:00-06:00",
+            "DTSTAMP": "2026-10-12T16:11:35+00:00",
+            "DTSTART": "2026-10-12T00:00:00-06:00",
+            "SEQUENCE": "0",
+            "SUMMARY": "Multi-day ending a while from now",
+            "TRANSP": "TRANSPARENT",
+            "UID": "8f978d15-5a7f-4ea0-a5d2-c96b325d43db"
+        },
+        {
+            "DTEND": "2026-10-12T10:30:00-06:00",
+            "DTSTAMP": "2026-10-13T13:53:05+00:00",
+            "DTSTART": "2026-10-12T10:00:00-06:00",
+            "SEQUENCE": "0",
+            "SUMMARY": "Something",
+            "TRANSP": "OPAQUE",
+            "UID": "3da40f5a-5232-4c6e-bd36-21ff1d202406"
+        },
+        {
+            "DTEND": "2026-10-12T18:00:00-06:00",
+            "DTSTAMP": "2026-10-13T13:53:16+00:00",
+            "DTSTART": "2026-10-12T17:00:00-06:00",
+            "SEQUENCE": "0",
+            "SUMMARY": "Something else",
+            "TRANSP": "OPAQUE",
+            "UID": "281de565-57b7-4643-9bab-9a0c37fe48fa"
+        },
+        {
+            "DTEND": "2026-10-13T11:30:00-06:00",
+            "DTSTAMP": "2026-10-13T13:53:26+00:00",
+            "DTSTART": "2026-10-13T11:00:00-06:00",
+            "SEQUENCE": "0",
+            "SUMMARY": "More things",
+            "TRANSP": "OPAQUE",
+            "UID": "532e7a7a-78c3-4511-ac18-5d1932c7be60"
+        },
+        {
+            "DTEND": "2026-10-13T14:30:00-06:00",
+            "DTSTAMP": "2026-10-13T13:53:39+00:00",
+            "DTSTART": "2026-10-13T14:00:00-06:00",
+            "SEQUENCE": "0",
+            "SUMMARY": "Yep!",
+            "TRANSP": "OPAQUE",
+            "UID": "b7ef7bad-1ef3-49b7-b512-a8791b2d78cb",
+            "0": null
+        },
+        {
+            "DTEND": "2026-10-14T13:00:00-06:00",
+            "DTSTAMP": "2026-10-13T13:53:49+00:00",
+            "DTSTART": "2026-10-14T12:00:00-06:00",
+            "SEQUENCE": "0",
+            "SUMMARY": "Hmmmm",
+            "TRANSP": "OPAQUE",
+            "UID": "766ac533-afeb-4796-ba8a-2679fb7dfadd"
+        }
+    ]
 }

@@ -1,3 +1,10 @@
+export const portraitHack = () => {
+  // this shouldn't be necessary but larapaper doesn't seem to set these classes itself, so we will
+  if (window.innerHeight > window.innerWidth) {
+    document.querySelector(".screen")?.classList.add("screen--portrait");
+  }
+};
+
 export const deleteFirstHack = () => {
   // stupid hack to render dividers between elements; the first is marked for removal
   const toDelete = document.querySelectorAll(".delete-first")[0];

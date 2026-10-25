@@ -56,6 +56,12 @@ export const renderHourlyView = (
   });
 };
 
+// TODO:
+// - make this a component
+// - have a separate renderEvents method for each day component
+// - draw the day, then the labels, then the events
+// - consider switching to using a CSS grid? it would make all-day events easier I think?
+
 const drawLabels = ({
   firstDayEl,
   numHours,

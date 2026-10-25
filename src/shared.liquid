@@ -162,6 +162,24 @@
     return { min, max, numHours };
   };
 
+  // js/util.ts
+  var deleteFirstHack = () => {
+    const toDelete = document.querySelectorAll(".delete-first")[0];
+    toDelete?.remove();
+  };
+  var verticalDivider = () => {
+    const divider = document.createElement("div");
+    divider.classList.add("divider--v");
+    divider.classList.add("delete-first");
+    return divider;
+  };
+  var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
+  var textWrapping = (el) => {
+    const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
+    const height = el.getBoundingClientRect().height;
+    return height > fontSize * 2;
+  };
+
   // node_modules/lodash-es/_arrayEach.js
   function arrayEach(array, iteratee) {
     var index = -1, length = array == null ? 0 : array.length;
@@ -1006,80 +1024,6 @@
     };
   };
 
-  // js/util.ts
-  var deleteFirstHack = () => {
-    const toDelete = document.querySelectorAll(".delete-first")[0];
-    toDelete?.remove();
-  };
-  var verticalDivider = () => {
-    const divider = document.createElement("div");
-    divider.classList.add("divider--v");
-    divider.classList.add("delete-first");
-    return divider;
-  };
-  var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
-  var textWrapping = (el) => {
-    const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
-    const height = el.getBoundingClientRect().height;
-    return height > fontSize * 2;
-  };
-
-  // js/list_view.ts
-  var renderListView = (days, format) => {
-    const daysContainer = document.querySelector(".days");
-    if (!daysContainer) {
-      console.error("Unable to locate days container");
-      return;
-    }
-    const dayTemplate = template2("#day-template-list");
-    const eventTemplate = template2("#event-template");
-    const isFull = format === "full";
-    let heightBudget = daysContainer.getBoundingClientRect().height;
-    let continueRender = true;
-    days.forEach((day) => {
-      if (!isFull && !continueRender) {
-        return;
-      }
-      if (!isFull && day.events.length === 0) {
-        return;
-      }
-      const dayEl = dayTemplate(day);
-      if (isFull) {
-        daysContainer.appendChild(verticalDivider());
-      }
-      daysContainer.appendChild(dayEl);
-      let numEventsRendered = 0;
-      const eventsContainer = dayEl.querySelector(".events");
-      if (!eventsContainer) {
-        console.error("Unable to locate events container");
-        return;
-      }
-      if (isFull) {
-        continueRender = true;
-        heightBudget = daysContainer.getBoundingClientRect().height;
-      }
-      day.events.forEach((event) => {
-        if (!continueRender) {
-          return;
-        }
-        const eventEl = eventTemplate(event);
-        eventsContainer.appendChild(eventEl);
-        const deficit = heightBudget - dayEl.getBoundingClientRect().height;
-        if (deficit < 0) {
-          continueRender = false;
-          eventEl.remove();
-          return;
-        }
-        numEventsRendered += 1;
-      });
-      if (!isFull && numEventsRendered === 0) {
-        dayEl.remove();
-      }
-      heightBudget -= dayEl.getBoundingClientRect().height;
-    });
-    deleteFirstHack();
-  };
-
   // js/component.ts
   var Component = class {
     static template = "";
@@ -1108,9 +1052,82 @@
     }
   };
 
+  // js/components/list/event.ts
+  var EventComponent = class extends Component {
+    static template = "#event-template";
+    getProps() {
+      const { calendarIndex, name, durationString } = this.props.event;
+      return {
+        calendarIndex,
+        name,
+        durationString
+      };
+    }
+  };
+
+  // js/components/list/day.ts
+  var DayComponent = class extends Component {
+    static template = "#day-template-list";
+    exhausted = false;
+    eventsRendered = 0;
+    getProps() {
+      const { dayOfWeek, dateString } = this.props.day;
+      return {
+        dayOfWeek,
+        dateString
+      };
+    }
+    postRender() {
+      const { day, maxBottom, removeIfEmpty } = this.props;
+      const eventsContainer = this.el.querySelector(".events");
+      for (const event of day.events) {
+        const eventComponent = new EventComponent({ event });
+        const eventEl = eventComponent.render(eventsContainer);
+        if (this.el.getBoundingClientRect().bottom > maxBottom) {
+          eventEl.remove();
+          this.exhausted = true;
+          break;
+        }
+        this.eventsRendered += 1;
+      }
+      if (removeIfEmpty && this.eventsRendered === 0) {
+        this.el.remove();
+      }
+    }
+  };
+
+  // js/list_view.ts
+  var renderListView = (days, format) => {
+    const daysContainer = document.querySelector(".days");
+    if (!daysContainer) {
+      console.error("Unable to locate days container");
+      return;
+    }
+    const columns = format === "full" && window.config.single_column !== "true";
+    const maxBottom = daysContainer.getBoundingClientRect().bottom;
+    for (const day of days) {
+      if (!columns && day.events.length === 0) {
+        continue;
+      }
+      if (columns) {
+        daysContainer.appendChild(verticalDivider());
+      }
+      const dayComponent = new DayComponent({
+        day,
+        maxBottom,
+        removeIfEmpty: !columns
+      });
+      dayComponent.render(daysContainer);
+      if (!columns && dayComponent.exhausted) {
+        break;
+      }
+    }
+    deleteFirstHack();
+  };
+
   // js/components/hourly/event.ts
   var backgrounds = [10, 30, 60];
-  var EventComponent = class extends Component {
+  var EventComponent2 = class extends Component {
     static template = "#hourly-event";
     getProps() {
       const event = this.props.event;
@@ -1167,7 +1184,7 @@
   };
 
   // js/components/hourly/day.ts
-  var DayComponent = class extends Component {
+  var DayComponent2 = class extends Component {
     static template = "#day-template-hourly";
     eventComponents = [];
     getProps() {
@@ -1185,7 +1202,7 @@
         if (event.allDay || !(event.start < endTime && event.end > startTime)) {
           return;
         }
-        const eventComponent = new EventComponent({
+        const eventComponent = new EventComponent2({
           event,
           containerHeight: height,
           startTime,
@@ -1230,7 +1247,7 @@
       if (isFull) {
         daysContainer.appendChild(verticalDivider());
       }
-      const dayComponent = new DayComponent({
+      const dayComponent = new DayComponent2({
         day,
         startTime,
         endTime,
@@ -1285,10 +1302,15 @@
   };
 
   // js/main.ts
-  window.renderEvents = (numDays, format) => {
+  window.renderEvents = (format) => {
+    const numDays = Number(window.config.num_days) || 3;
     const events = prepEvents();
     const startDate = /* @__PURE__ */ new Date();
-    document.querySelector(".layout").classList.add(format);
+    const layout = document.querySelector(".layout");
+    layout.classList.add(format);
+    if (window.config.single_column === "true") {
+      layout.classList.add("single-column");
+    }
     const days = bucketEvents(events, startDate, numDays);
     if (window.config.view_type === "list") {
       renderListView(days, format);

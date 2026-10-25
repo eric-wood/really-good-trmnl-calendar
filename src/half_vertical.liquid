@@ -1,11 +1,11 @@
 {% raw %}
-<template id="day-template">
-  <div class="flex flex--col gap flex--stretch-x">
-    <div class="divider delete-first"></div>
+<template id="day-template-list">
+  <div class="flex flex--col gap flex--stretch-x day">
     <div class="flex flex--between flex--left flex--stretch-x">
       <span class="title">{{ dayOfWeek }}</span>
       <span class="title">{{ dateString }}</span>
     </div>
+    <div class="divider"></div>
     <div class="events flex flex--col gap--small"></div>
   </div>
 </template>
@@ -47,5 +47,5 @@
 </div>
 
 <script>
-  window.renderEvents(7, "half_vertical");
+  window.renderEvents("half_vertical");
 </script>

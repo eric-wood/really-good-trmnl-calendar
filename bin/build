@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Build zip artifact for upload
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+bin/build-shared
+
+out=dist/calendar.zip
+mkdir -p dist
+rm -f "$out"
+
+(cd src && zip -qr -X "../$out" . -x '.*' '*/.*')
+
+echo "built $out"
