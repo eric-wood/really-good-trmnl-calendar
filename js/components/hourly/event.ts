@@ -14,6 +14,11 @@ interface EventProps {
 
 export class EventComponent extends Component<EventProps> {
   static template = "#hourly-event";
+  elements = {
+    time: ".time",
+    name: ".name",
+    stripe: ".stripe",
+  };
 
   getProps() {
     const event = this.props.event;
@@ -52,10 +57,9 @@ export class EventComponent extends Component<EventProps> {
     if (showBand) {
       const calendarIndex = event.calendarIndex;
 
-      const stripe = this.el.querySelector(".stripe");
-      stripe.classList.add(`bg--gray-${backgrounds[calendarIndex]}`);
+      this.els.stripe.classList.add(`bg--gray-${backgrounds[calendarIndex]}`);
 
-      const stripeWidth = stripe.getBoundingClientRect().width;
+      const stripeWidth = this.els.stripe.getBoundingClientRect().width;
       this.el.style.paddingRight = `${stripeWidth + 3}px`;
     }
 
@@ -66,16 +70,13 @@ export class EventComponent extends Component<EventProps> {
   }
 
   adjustFit() {
-    const timeEl = this.el.querySelector(".time") as HTMLElement;
-    const nameEl = this.el.querySelector(".name") as HTMLElement;
-
-    if (textWrapping(timeEl)) {
+    if (textWrapping(this.els.time)) {
       this.el.classList.add("multi-line");
     }
 
     if (isOverflowingY(this.el)) {
       // if we're still overflowing on the Y axis let's lower the font size
-      nameEl.classList.add("label--small");
+      this.els.name.classList.add("label--small");
     }
 
     if (isOverflowingY(this.el)) {
@@ -87,7 +88,7 @@ export class EventComponent extends Component<EventProps> {
     }
 
     if (isOverflowingY(this.el)) {
-      timeEl.remove();
+      this.els.time.remove();
     }
   }
 }

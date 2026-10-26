@@ -1152,6 +1152,11 @@
   var backgrounds = [10, 30, 60];
   var EventComponent2 = class extends Component {
     static template = "#hourly-event";
+    elements = {
+      time: ".time",
+      name: ".name",
+      stripe: ".stripe"
+    };
     getProps() {
       const event = this.props.event;
       const { name, durationString } = event;
@@ -1177,9 +1182,8 @@
       }
       if (showBand) {
         const calendarIndex = event.calendarIndex;
-        const stripe = this.el.querySelector(".stripe");
-        stripe.classList.add(`bg--gray-${backgrounds[calendarIndex]}`);
-        const stripeWidth = stripe.getBoundingClientRect().width;
+        this.els.stripe.classList.add(`bg--gray-${backgrounds[calendarIndex]}`);
+        const stripeWidth = this.els.stripe.getBoundingClientRect().width;
         this.el.style.paddingRight = `${stripeWidth + 3}px`;
       }
       if (event.widthPercentage === 100) {
@@ -1188,20 +1192,18 @@
       }
     }
     adjustFit() {
-      const timeEl = this.el.querySelector(".time");
-      const nameEl = this.el.querySelector(".name");
-      if (textWrapping(timeEl)) {
+      if (textWrapping(this.els.time)) {
         this.el.classList.add("multi-line");
       }
       if (isOverflowingY(this.el)) {
-        nameEl.classList.add("label--small");
+        this.els.name.classList.add("label--small");
       }
       if (isOverflowingY(this.el)) {
         const height = this.el.scrollHeight + 3;
         this.el.style.height = `${height}px`;
       }
       if (isOverflowingY(this.el)) {
-        timeEl.remove();
+        this.els.time.remove();
       }
     }
   };
@@ -1209,6 +1211,9 @@
   // js/components/hourly/day.ts
   var DayComponent2 = class extends Component {
     static template = "#day-template-hourly";
+    elements = {
+      eventsContainer: ".events"
+    };
     eventComponents = [];
     getProps() {
       const { dayOfWeek, dateString } = this.props.day;
@@ -1219,8 +1224,7 @@
     }
     postRender() {
       const { day, startTime, endTime, numCalendars } = this.props;
-      const eventsContainer = this.el.querySelector(".events");
-      const height = eventsContainer.getBoundingClientRect().height;
+      const height = this.els.eventsContainer.getBoundingClientRect().height;
       this.eventComponents = day.events.map((event) => {
         if (event.allDay || !(event.start < endTime && event.end > startTime)) {
           return;
@@ -1232,7 +1236,7 @@
           endTime,
           showBand: numCalendars > 1
         });
-        eventComponent.render(eventsContainer);
+        eventComponent.render(this.els.eventsContainer);
         return eventComponent;
       }).filter(Boolean);
     }

@@ -12,6 +12,9 @@ interface DayProps {
 
 export class DayComponent extends Component<DayProps> {
   static template = "#day-template-hourly";
+  elements = {
+    eventsContainer: ".events",
+  };
   eventComponents: EventComponent[] = [];
 
   getProps() {
@@ -26,8 +29,7 @@ export class DayComponent extends Component<DayProps> {
   postRender() {
     const { day, startTime, endTime, numCalendars } = this.props;
 
-    const eventsContainer = this.el.querySelector(".events") as HTMLElement;
-    const height = eventsContainer.getBoundingClientRect().height;
+    const height = this.els.eventsContainer.getBoundingClientRect().height;
 
     this.eventComponents = day.events
       .map((event) => {
@@ -43,7 +45,7 @@ export class DayComponent extends Component<DayProps> {
           showBand: numCalendars > 1,
         });
 
-        eventComponent.render(eventsContainer);
+        eventComponent.render(this.els.eventsContainer);
         return eventComponent;
       })
       .filter(Boolean);
