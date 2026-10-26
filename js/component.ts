@@ -5,10 +5,13 @@ export class Component<Props extends object = object> {
   t: ((...args: any) => HTMLElement) | undefined;
   props: Props;
   el: HTMLElement | null = null;
+  els: { [name: string]: HTMLElement };
+  elements: { [name: string]: string };
 
   constructor(props: Props) {
     this.t = template((this.constructor as typeof Component).template);
     this.props = props;
+    this.els = {};
   }
 
   getProps(): Object {
@@ -26,7 +29,16 @@ export class Component<Props extends object = object> {
     const el = this.t(this.getProps());
     this.el = el;
     container.appendChild(el);
+
+    Object.entries(this.elements ?? {}).forEach(([name, selector]) => {
+      this.els[name] = this.el.querySelector(selector);
+    });
+
     this.postRender();
     return el;
+  }
+
+  querySelector(selector: string): HTMLElement | undefined {
+    return this.el.querySelector(selector);
   }
 }

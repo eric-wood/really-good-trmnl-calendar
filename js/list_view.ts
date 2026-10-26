@@ -16,6 +16,7 @@ export const renderListView = (days: Day[], format: Format) => {
   // we take extra care to ensure we only render as many events as can fit in the vertical height!
   const maxBottom = daysContainer.getBoundingClientRect().bottom;
 
+  const dayComponents = [];
   for (const day of days) {
     if (!columns && day.events.length === 0) {
       continue;
@@ -32,10 +33,15 @@ export const renderListView = (days: Day[], format: Format) => {
       removeIfEmpty: !columns,
     });
     dayComponent.render(daysContainer);
+    dayComponents.push(dayComponent);
 
     if (!columns && dayComponent.exhausted) {
       break;
     }
+  }
+
+  if (columns) {
+    dayComponents.forEach((day) => day.removeExcessEvents());
   }
 
   deleteFirstHack();

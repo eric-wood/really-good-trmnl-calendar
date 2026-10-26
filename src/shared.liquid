@@ -1030,9 +1030,12 @@
     t;
     props;
     el = null;
+    els;
+    elements;
     constructor(props) {
       this.t = template2(this.constructor.template);
       this.props = props;
+      this.els = {};
     }
     getProps() {
       return this.props;
@@ -1047,8 +1050,14 @@
       const el = this.t(this.getProps());
       this.el = el;
       container.appendChild(el);
+      Object.entries(this.elements ?? {}).forEach(([name, selector]) => {
+        this.els[name] = this.el.querySelector(selector);
+      });
       this.postRender();
       return el;
+    }
+    querySelector(selector) {
+      return this.el.querySelector(selector);
     }
   };
 
@@ -1068,6 +1077,9 @@
   // js/components/list/day.ts
   var DayComponent = class extends Component {
     static template = "#day-template-list";
+    elements = {
+      eventsContainer: ".events"
+    };
     exhausted = false;
     eventsRendered = 0;
     getProps() {
@@ -1079,10 +1091,9 @@
     }
     postRender() {
       const { day, maxBottom, removeIfEmpty } = this.props;
-      const eventsContainer = this.el.querySelector(".events");
       for (const event of day.events) {
         const eventComponent = new EventComponent({ event });
-        const eventEl = eventComponent.render(eventsContainer);
+        const eventEl = eventComponent.render(this.els.eventsContainer);
         if (this.el.getBoundingClientRect().bottom > maxBottom) {
           eventEl.remove();
           this.exhausted = true;
@@ -1092,6 +1103,13 @@
       }
       if (removeIfEmpty && this.eventsRendered === 0) {
         this.el.remove();
+      }
+    }
+    // this has to be called after all of the columns are rendered because each new
+    // column potentially compresses and wraps the text in the columns before it
+    removeExcessEvents() {
+      while (this.el.scrollHeight > this.props.maxBottom) {
+        this.els.eventsContainer.lastChild.remove();
       }
     }
   };
@@ -1105,6 +1123,7 @@
     }
     const columns = format === "full" && window.config.single_column !== "true";
     const maxBottom = daysContainer.getBoundingClientRect().bottom;
+    const dayComponents = [];
     for (const day of days) {
       if (!columns && day.events.length === 0) {
         continue;
@@ -1118,9 +1137,13 @@
         removeIfEmpty: !columns
       });
       dayComponent.render(daysContainer);
+      dayComponents.push(dayComponent);
       if (!columns && dayComponent.exhausted) {
         break;
       }
+    }
+    if (columns) {
+      dayComponents.forEach((day) => day.removeExcessEvents());
     }
     deleteFirstHack();
   };

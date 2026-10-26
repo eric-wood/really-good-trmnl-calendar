@@ -14,7 +14,7 @@ custom_fields:
   calendar_3_name: Family
   view_type: list
   num_days: 3
-  single_column: true
+  single_column: false
 
 # override variables
 variables:

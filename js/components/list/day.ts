@@ -10,6 +10,10 @@ interface DayProps {
 
 export class DayComponent extends Component<DayProps> {
   static template = "#day-template-list";
+  elements = {
+    eventsContainer: ".events",
+  };
+
   exhausted = false;
   eventsRendered = 0;
 
@@ -24,11 +28,10 @@ export class DayComponent extends Component<DayProps> {
 
   postRender() {
     const { day, maxBottom, removeIfEmpty } = this.props;
-    const eventsContainer = this.el.querySelector(".events") as HTMLElement;
 
     for (const event of day.events) {
       const eventComponent = new EventComponent({ event });
-      const eventEl = eventComponent.render(eventsContainer);
+      const eventEl = eventComponent.render(this.els.eventsContainer);
 
       if (this.el.getBoundingClientRect().bottom > maxBottom) {
         eventEl.remove();
@@ -41,6 +44,14 @@ export class DayComponent extends Component<DayProps> {
 
     if (removeIfEmpty && this.eventsRendered === 0) {
       this.el.remove();
+    }
+  }
+
+  // this has to be called after all of the columns are rendered because each new
+  // column potentially compresses and wraps the text in the columns before it
+  removeExcessEvents() {
+    while (this.el.scrollHeight > this.props.maxBottom) {
+      this.els.eventsContainer.lastChild.remove();
     }
   }
 }
