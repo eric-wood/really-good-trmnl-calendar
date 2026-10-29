@@ -1,12 +1,22 @@
 {% raw %}
+<template id="hourly-template">
+  <div class="days"></div>
+</template>
+
+<template id="hourly-lines-template">
+    <div class="lines"></div>
+</template>
+
+<template id="day-header-template-hourly">
+  <div class="flex flex--between flex--left stretch-x">
+    <span class="title">{{ dayOfWeek }}</span>
+    <span class="title">{{ dateString }}</span>
+  </div>
+</template>
+
 <template id="day-template-hourly">
-  <div class="flex flex--col gap stretch day">
-    <div class="flex flex--between flex--left stretch-x">
-      <span class="title">{{ dayOfWeek }}</span>
-      <span class="title">{{ dateString }}</span>
-    </div>
-    <div class="all-day-events"></div>
-    <div class="events flex flex--col gap--small stretch"></div>
+  <div class="day">
+    <div class="events"></div>
   </div>
 </template>
 
@@ -47,7 +57,9 @@
 </template>
 
 <template id="all-day-events-template">
+  <div class="all-day"></div>
 </template>
+
 <template id="all-day-event-template">
   <div class="all-day-event">
     <div class="label label--small">{{ name }}</div>
@@ -56,14 +68,6 @@
 {% endraw %}
 
 <style>
-.layout.hourly [data-layout="list"] {
-  display: none
-}
-
-.layout.list [data-layout="hourly"] {
-  display: none
-}
-
 .layout.single-column .days {
   flex-direction: column;
   align-items: stretch;
@@ -72,6 +76,38 @@
 /* stacked days should size to content, not split the height evenly */
 .layout.single-column .day {
   flex: none;
+}
+
+.days {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat({{ trmnl.plugin_settings.custom_fields_values.num_days }}, 1fr);
+  grid-template-rows: auto auto 1fr;
+  gap: 15px;
+}
+
+.days .divider--v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -7.5px;
+  grid-row: 1 / -1;
+  z-index: 1;
+}
+
+.days .lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  grid-row: 3;
+}
+
+.all-day {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-row: 2;
+  grid-column: 1 / -1;
+  z-index: 2;
 }
 
 .hour-marker {
@@ -89,6 +125,7 @@
 .events {
   position: relative;
   overflow: hidden;
+  height: 100%;
 }
 
 .hourly-event {
@@ -121,12 +158,14 @@
 </style>
 
 <div class="layout layout--col layout--stretch layout--left">
-  <div class="days flex flex--row flex--left flex--top gap--small"></div>
+  <!--<div class="days flex flex--row flex--left flex--top gap--small"></div>-->
 </div>
 
+<!--
 <div class="title_bar">
   <span class="title">Calendar</span>
 </div>
+-->
 
 <script>
   window.renderEvents("full");

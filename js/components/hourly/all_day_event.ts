@@ -3,7 +3,6 @@ import type { Event } from "@/events";
 
 interface AllDayEventProps {
   event: Event;
-  date: Date;
 }
 
 export class AllDayEventComponent extends Component<AllDayEventProps> {

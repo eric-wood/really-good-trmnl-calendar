@@ -1,7 +1,6 @@
 import { Component } from "@/component";
 import type { Day } from "@/events";
 import { EventComponent } from "@/components/hourly/event";
-import { AllDayEventComponent } from "./all_day_event";
 
 interface DayProps {
   day: Day;
@@ -16,15 +15,6 @@ export class DayComponent extends Component<DayProps> {
     eventsContainer: ".events",
   };
   eventComponents: EventComponent[] = [];
-
-  getProps() {
-    const { dayOfWeek, dateString } = this.props.day;
-
-    return {
-      dayOfWeek,
-      dateString,
-    };
-  }
 
   postRender() {
     const { day, startTime, endTime, numCalendars } = this.props;

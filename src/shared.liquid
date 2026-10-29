@@ -1148,6 +1148,26 @@
     deleteFirstHack();
   };
 
+  // js/components/hourly/all_day_events.ts
+  var AllDayEventsComponent = class extends Component {
+    static template = "#all-day-events-template";
+    postRender() {
+      const { events } = this.props;
+    }
+  };
+
+  // js/components/hourly/day_header.ts
+  var DayHeaderComponent = class extends Component {
+    static template = "#day-header-template-hourly";
+    getProps() {
+      const { dayOfWeek, dateString } = this.props.day;
+      return {
+        dayOfWeek,
+        dateString
+      };
+    }
+  };
+
   // js/components/hourly/event.ts
   var backgrounds = [10, 30, 60];
   var EventComponent2 = class extends Component {
@@ -1215,13 +1235,6 @@
       eventsContainer: ".events"
     };
     eventComponents = [];
-    getProps() {
-      const { dayOfWeek, dateString } = this.props.day;
-      return {
-        dayOfWeek,
-        dateString
-      };
-    }
     postRender() {
       const { day, startTime, endTime, numCalendars } = this.props;
       const height = this.els.eventsContainer.getBoundingClientRect().height;
@@ -1256,76 +1269,112 @@
     }
   };
 
-  // js/hourly_view.ts
-  var renderHourlyView = (days, startDate, format) => {
-    const daysContainer = document.querySelector(".days");
-    const isFull = format === "full";
-    const allEvents = days.flatMap(({ events }) => events);
-    const numCalendars = new Set(
-      allEvents.map(({ calendarIndex }) => calendarIndex)
-    ).size;
-    const weekWindow = minMaxHour(allEvents);
-    const numHours = weekWindow.numHours;
-    const startTime = weekWindow.min;
-    const endTime = weekWindow.max;
-    const dayComponents = days.map((day, i) => {
-      startTime.setDate(startDate.getDate() + i);
-      endTime.setDate(startDate.getDate() + i);
-      if (isFull) {
-        daysContainer.appendChild(verticalDivider());
-      }
-      const dayComponent = new DayComponent2({
-        day,
-        startTime,
-        endTime,
-        numCalendars
-      });
-      dayComponent.render(daysContainer);
-      return dayComponent;
-    });
-    const firstDayEl = daysContainer.querySelector(".day");
-    drawLabels({ firstDayEl, numHours, startTime, daysContainer });
-    deleteFirstHack();
-    dayComponents.forEach((day) => {
-      day.fitEvents();
-    });
-  };
-  var drawLabels = ({
-    firstDayEl,
-    numHours,
-    startTime,
-    daysContainer
-  }) => {
-    const dayDimensions = firstDayEl.getBoundingClientRect();
-    const eventsContainer = firstDayEl.querySelector(".events");
-    if (!eventsContainer) {
-      console.error("unable to locate .events in day");
-      return;
-    }
-    const eventDimensions = eventsContainer.getBoundingClientRect();
-    const startPx = eventDimensions.top - dayDimensions.top;
-    const height = eventDimensions.height;
-    const pxPerHour = height / numHours;
-    let maxLabelWidth = 0;
-    for (let i = 0; i < numHours; i += 1) {
-      const hour = startTime.getHours();
-      startTime.setHours(startTime.getHours() + 1);
-      const y = i * pxPerHour + startPx;
-      const marker = new MarkerComponent({ y, hour });
-      const divider = marker.render(daysContainer);
-      const label = divider.querySelector(".label");
-      const labelWidth = label.getBoundingClientRect().width;
-      if (labelWidth > maxLabelWidth) {
-        maxLabelWidth = labelWidth;
-      }
-    }
-    document.querySelectorAll(".hour-marker .label").forEach((label) => {
-      if (!(label instanceof HTMLElement)) {
+  // js/components/hourly/lines.ts
+  var LinesComponent = class extends Component {
+    static template = "#hourly-lines-template";
+    maxLabelWidth = 0;
+    postRender() {
+      const { firstDayEl, startTime, numHours } = this.props;
+      const dayDimensions = firstDayEl.getBoundingClientRect();
+      const eventsContainer = firstDayEl.querySelector(".events");
+      if (!eventsContainer) {
+        console.error("unable to locate .events in day");
         return;
       }
-      label.style.width = `${maxLabelWidth}px`;
-    });
-    firstDayEl.style.paddingLeft = `${maxLabelWidth + 10}px`;
+      const eventDimensions = eventsContainer.getBoundingClientRect();
+      const startPx = eventDimensions.top - dayDimensions.top;
+      const height = eventDimensions.height;
+      const pxPerHour = height / numHours;
+      let maxLabelWidth = 0;
+      for (let i = 0; i < numHours; i += 1) {
+        const hour = startTime.getHours();
+        startTime.setHours(startTime.getHours() + 1);
+        const y = i * pxPerHour + startPx;
+        const marker = new MarkerComponent({ y, hour });
+        const divider = marker.render(this.el);
+        const label = divider.querySelector(".label");
+        const labelWidth = label.getBoundingClientRect().width;
+        if (labelWidth > maxLabelWidth) {
+          maxLabelWidth = labelWidth;
+        }
+      }
+      this.el.querySelectorAll(".hour-marker .label").forEach((label) => {
+        if (!(label instanceof HTMLElement)) {
+          return;
+        }
+        label.style.width = `${maxLabelWidth}px`;
+      });
+      this.maxLabelWidth = maxLabelWidth;
+    }
+  };
+
+  // js/components/hourly/hourly.ts
+  var HourlyComponent = class extends Component {
+    static template = "#hourly-template";
+    elements = {
+      linesContainer: ".lines"
+    };
+    postRender() {
+      const { days, startDate } = this.props;
+      const allEvents = days.flatMap(({ events }) => events);
+      const numCalendars = new Set(
+        allEvents.map(({ calendarIndex }) => calendarIndex)
+      ).size;
+      this.renderHeaders();
+      this.renderAllDay(allEvents);
+      const weekWindow = minMaxHour(allEvents);
+      const numHours = weekWindow.numHours;
+      const startTime = weekWindow.min;
+      const endTime = weekWindow.max;
+      const dayComponents = days.map((day, i) => {
+        startTime.setDate(startDate.getDate() + i);
+        endTime.setDate(startDate.getDate() + i);
+        const dayComponent = new DayComponent2({
+          day,
+          startTime,
+          endTime,
+          numCalendars
+        });
+        dayComponent.render(this.el);
+        if (i < days.length - 1) {
+          const divider = verticalDivider();
+          divider.style.gridColumn = `${i + 2}`;
+          this.el.appendChild(divider);
+        }
+        return dayComponent;
+      });
+      const linesComponent = new LinesComponent({
+        firstDayEl: dayComponents[0].el,
+        startTime,
+        numHours
+      });
+      linesComponent.render(this.el);
+      this.el.style.paddingLeft = `${linesComponent.maxLabelWidth + 10}px`;
+      dayComponents.forEach((day) => {
+        day.fitEvents();
+      });
+    }
+    renderHeaders() {
+      const { days } = this.props;
+      days.forEach((day) => {
+        const headerComponent = new DayHeaderComponent({ day });
+        headerComponent.render(this.el);
+      });
+    }
+    renderAllDay(allEvents) {
+      const allDayEvents = allEvents.filter(({ allDay }) => allDay);
+      const allDayEventsComponent = new AllDayEventsComponent({
+        events: allDayEvents
+      });
+      allDayEventsComponent.render(this.el);
+    }
+  };
+
+  // js/hourly_view.ts
+  var renderHourlyView = (days, startDate, format) => {
+    const container = document.querySelector(".layout");
+    const hourlyComponent = new HourlyComponent({ days, format, startDate });
+    hourlyComponent.render(container);
   };
 
   // js/main.ts
