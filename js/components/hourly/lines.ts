@@ -14,6 +14,7 @@ export class LinesComponent extends Component<LinesProps> {
   postRender() {
     const { firstDayEl, startTime, numHours } = this.props;
 
+    // TODO: I should probably pass the component
     const dayDimensions = firstDayEl.getBoundingClientRect();
     const eventsContainer = firstDayEl.querySelector(".events");
 

@@ -46,12 +46,14 @@
       (calendarEvents, calendarIndex) => {
         const calendarName = calendarNames[calendarIndex] || `Calendar ${calendarIndex + 1}`;
         return (calendarEvents ?? []).map((event) => {
+          const id = event.UID;
           const start = new Date(event.DTSTART);
           const end = new Date(event.DTEND);
           const name = event.SUMMARY;
           const allDay = end.valueOf() - start.valueOf() >= fullDay;
           const durationString = formatTimeDuration(start, end, allDay);
           return {
+            id,
             start,
             end,
             durationString,
@@ -1148,11 +1150,36 @@
     deleteFirstHack();
   };
 
+  // js/components/hourly/all_day_event.ts
+  var AllDayEventComponent = class extends Component {
+    static template = "#all-day-event-template";
+    getProps() {
+      const { name } = this.props.event;
+      return {
+        name
+      };
+    }
+    postRender() {
+    }
+  };
+
   // js/components/hourly/all_day_events.ts
   var AllDayEventsComponent = class extends Component {
     static template = "#all-day-events-template";
     postRender() {
       const { events } = this.props;
+      const eventsById = {};
+      const unique = events.filter(({ id }) => {
+        if (eventsById[id]) {
+          return false;
+        }
+        eventsById[id] = true;
+        return true;
+      });
+      unique.forEach((event) => {
+        const component = new AllDayEventComponent({ event });
+        component.render(this.el);
+      });
     }
   };
 

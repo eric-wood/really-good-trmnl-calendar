@@ -1,4 +1,5 @@
 export interface Event {
+  id: string;
   start: Date;
   end: Date;
   durationString: string;
@@ -64,6 +65,7 @@ export const prepEvents = () => {
         calendarNames[calendarIndex] || `Calendar ${calendarIndex + 1}`;
 
       return (calendarEvents ?? []).map((event) => {
+        const id = event.UID;
         const start = new Date(event.DTSTART);
         const end = new Date(event.DTEND);
         const name = event.SUMMARY;
@@ -72,6 +74,7 @@ export const prepEvents = () => {
         const durationString = formatTimeDuration(start, end, allDay);
 
         return {
+          id,
           start,
           end,
           durationString,
