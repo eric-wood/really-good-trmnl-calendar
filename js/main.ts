@@ -18,14 +18,12 @@ window.renderEvents = (format: Format) => {
   }
 
   if (!window.config.show_title_bar) {
-    console.log("hiding title bar...");
     const titleBar = querySelector(".title_bar");
-    titleBar.style.display = "none";
+    titleBar.remove();
   }
 
-  console.log(window.config);
-
   const days = bucketEvents(events, startDate, numDays);
+  console.log(days);
   if (window.config.view_type === "list") {
     renderListView(days, format);
   } else {

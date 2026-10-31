@@ -75,11 +75,16 @@
   position: absolute;
   left: 0;
   right: 0;
+  margin-top: -1px;
   display: flex;
   justify-content: space-between;
   padding-left: 3px;
   border: solid var(--bg-black-color) 1px;
   z-index: 1;
+}
+
+.hourly-event:first-child {
+  margin-top: 0;
 }
 
 .hourly-event.multi-line {

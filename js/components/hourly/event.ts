@@ -36,9 +36,7 @@ export class EventComponent extends Component<EventProps> {
     const offset = containerHeight / (endTime.valueOf() - startTime.valueOf());
     const top = (event.start.valueOf() - startTime.valueOf()) * offset;
     const bottom =
-      containerHeight -
-      (event.end.valueOf() - startTime.valueOf()) * offset -
-      1;
+      containerHeight - (event.end.valueOf() - startTime.valueOf()) * offset;
 
     // ensure the borders don't double up
     if (event.lane > 0) {

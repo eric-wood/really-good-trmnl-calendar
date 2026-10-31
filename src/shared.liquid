@@ -77,11 +77,16 @@
   position: absolute;
   left: 0;
   right: 0;
+  margin-top: -1px;
   display: flex;
   justify-content: space-between;
   padding-left: 3px;
   border: solid var(--bg-black-color) 1px;
   z-index: 1;
+}
+
+.hourly-event:first-child {
+  margin-top: 0;
 }
 
 .hourly-event.multi-line {
@@ -1326,7 +1331,7 @@
       const { event, containerHeight, startTime, endTime, showBand } = this.props;
       const offset = containerHeight / (endTime.valueOf() - startTime.valueOf());
       const top = (event.start.valueOf() - startTime.valueOf()) * offset;
-      const bottom = containerHeight - (event.end.valueOf() - startTime.valueOf()) * offset - 1;
+      const bottom = containerHeight - (event.end.valueOf() - startTime.valueOf()) * offset;
       if (event.lane > 0) {
         this.el.style.borderLeft = "0";
       }
@@ -1608,12 +1613,11 @@
       layout.classList.add("single-column");
     }
     if (!window.config.show_title_bar) {
-      console.log("hiding title bar...");
       const titleBar = querySelector(".title_bar");
-      titleBar.style.display = "none";
+      titleBar.remove();
     }
-    console.log(window.config);
     const days = bucketEvents(events, startDate, numDays);
+    console.log(days);
     if (window.config.view_type === "list") {
       renderListView(days, format);
     } else {
