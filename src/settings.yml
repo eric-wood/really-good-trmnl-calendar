@@ -23,21 +23,6 @@ custom_fields:
       - '12-hour (1:30 PM)': '12'
       - '24-hour (13:30)': '24'
     default: '12'
-  - keyname: calendar_1_name
-    field_type: string
-    name: Calendar 1 name
-    description: Name for the first polling URL's calendar
-    optional: true
-  - keyname: calendar_2_name
-    field_type: string
-    name: Calendar 2 name
-    description: Name for the second polling URL's calendar
-    optional: true
-  - keyname: calendar_3_name
-    field_type: string
-    name: Calendar 3 name
-    description: Name for the third polling URL's calendar
-    optional: true
   - keyname: view_type
     field_type: select
     name: Day view type
@@ -61,3 +46,8 @@ custom_fields:
     name: Single Column
     description: Use a single full-width column to display events
     optional: true
+  - keyname: show_title_bar
+    field_type: boolean
+    name: Show Title Bar
+    description: Show the title bar at the bottom of the screen. You can see more things without it.
+    default: false

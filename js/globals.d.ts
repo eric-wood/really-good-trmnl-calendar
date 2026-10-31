@@ -14,11 +14,9 @@ declare global {
   interface Config {
     time_format?: "12" | "24";
     view_type?: ViewType;
-    calendar_1_name?: string;
-    calendar_2_name?: string;
-    calendar_3_name?: string;
     num_days?: string | number;
     single_column?: string;
+    show_title_bar: string;
   }
 
   interface Window {

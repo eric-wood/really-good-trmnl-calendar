@@ -1,12 +1,8 @@
 import lodashTemplate from "lodash-es/template";
+import { querySelector } from "./util";
 
 export const template = (selector: string) => {
-  const el = document.querySelector(selector);
-  if (!el) {
-    console.error(`unable to locate template ${selector}`);
-    return;
-  }
-
+  const el = querySelector(selector);
   const raw = el.innerHTML;
   const compiled = lodashTemplate(raw, { interpolate: /{{([\s\S]+?)}}/g });
 

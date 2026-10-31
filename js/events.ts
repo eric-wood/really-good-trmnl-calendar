@@ -6,7 +6,6 @@ export interface Event {
   name: string;
   allDay: boolean;
   calendarIndex: number;
-  calendarName: string;
   depth: number;
   widthPercentage: number;
   lane: number;
@@ -49,21 +48,11 @@ const formatTimeDuration = (
   return `${start}-${end}`;
 };
 
-// spelled out (not built from the index) so `trmnlp lint` sees the fields used
-const calendarNames = [
-  window.config.calendar_1_name,
-  window.config.calendar_2_name,
-  window.config.calendar_3_name,
-];
-
 // put the events into a friendlier format!
 // window.rawEvents is one array per calendar; null for missing/failed ones
 export const prepEvents = () => {
   const events = window.rawEvents.flatMap(
     (calendarEvents, calendarIndex): Event[] => {
-      const calendarName =
-        calendarNames[calendarIndex] || `Calendar ${calendarIndex + 1}`;
-
       return (calendarEvents ?? []).map((event) => {
         const id = event.UID;
         const start = new Date(event.DTSTART);
@@ -81,7 +70,6 @@ export const prepEvents = () => {
           name,
           allDay,
           calendarIndex,
-          calendarName,
           depth: 0,
           widthPercentage: 100,
           lane: 0,

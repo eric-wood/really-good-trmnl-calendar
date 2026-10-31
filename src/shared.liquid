@@ -100,24 +100,23 @@
 .hourly-event .label {
   align-items: flex-start;
 }
+.layout.single-column .days {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* stacked days should size to content, not split the height evenly */
+.layout.single-column .day {
+  flex: none;
+}
 </style>
-{% comment %}
-  Liquid -> JS handoff. Everything the scripts in shared/*.js need from the
-  payload gets serialized here. `</` is escaped so event text can't close the
-  script tag early.
-{% endcomment %}
 <script>
-  // One array of events per calendar (polling URL), indexed by calendar. With
-  // multiple URLs each response lands in IDX_n; with a single URL LaraPaper
-  // unwraps IDX_0, so its events are top-level. Missing/failed calendars are
-  // null.
   window.rawEvents = [
-    {% if IDX_0 %}{{ IDX_0.ical | json | replace: "</", "<\/" }}{% else %}{{ ical | json | replace: "</", "<\/" }}{% endif %},
-    {{ IDX_1.ical | json | replace: "</", "<\/" }},
-    {{ IDX_2.ical | json | replace: "</", "<\/" }}
+    {% if IDX_0 %}{{ IDX_0.ical | json }}{% else %}{{ ical | json }}{% endif %},
+    {{ IDX_1.ical | json }},
+    {{ IDX_2.ical | json }}
   ];
-  // user configuration (custom field values from settings.yml), keyed by keyname
-  window.config = {{ trmnl.plugin_settings.custom_fields_values | json | replace: "</", "<\/" }};
+  window.config = {{ trmnl.plugin_settings.custom_fields_values | json }};
 </script>
 {% raw %}
 <template id="hourly-template">
@@ -211,15 +210,9 @@
     const end = formatTime(endDate).replace(/ (\w+)$/, "$1");
     return `${start}-${end}`;
   };
-  var calendarNames = [
-    window.config.calendar_1_name,
-    window.config.calendar_2_name,
-    window.config.calendar_3_name
-  ];
   var prepEvents = () => {
     const events = window.rawEvents.flatMap(
       (calendarEvents, calendarIndex) => {
-        const calendarName = calendarNames[calendarIndex] || `Calendar ${calendarIndex + 1}`;
         return (calendarEvents ?? []).map((event) => {
           const id = event.UID;
           const start = new Date(event.DTSTART);
@@ -235,7 +228,6 @@
             name,
             allDay,
             calendarIndex,
-            calendarName,
             depth: 0,
             widthPercentage: 100,
             lane: 0
@@ -1228,116 +1220,6 @@
     }
   };
 
-  // js/util.ts
-  var verticalDivider = () => {
-    const divider = document.createElement("div");
-    divider.classList.add("divider--v");
-    return divider;
-  };
-  var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
-  var isOverflowingX = (el) => el.scrollWidth > el.getBoundingClientRect().width;
-  var textWrapping = (el) => {
-    const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
-    const height = el.getBoundingClientRect().height;
-    return height > fontSize * 2;
-  };
-
-  // js/components/list/event.ts
-  var EventComponent = class extends Component {
-    static template = "#event-template";
-    getProps() {
-      const { calendarIndex, name, durationString } = this.props.event;
-      return {
-        calendarIndex,
-        name,
-        durationString
-      };
-    }
-  };
-
-  // js/components/list/day.ts
-  var DayComponent = class extends Component {
-    static template = "#day-template-list";
-    elements = {
-      eventsContainer: ".events"
-    };
-    exhausted = false;
-    eventsRendered = 0;
-    getProps() {
-      const { dayOfWeek, dateString } = this.props.day;
-      return {
-        dayOfWeek,
-        dateString
-      };
-    }
-    postRender() {
-      const { day, maxBottom, removeIfEmpty, deferFitting } = this.props;
-      for (const event of day.events) {
-        const eventComponent = new EventComponent({ event });
-        const eventEl = eventComponent.render(this.els.eventsContainer);
-        if (!deferFitting && this.el.getBoundingClientRect().bottom > maxBottom) {
-          eventEl.remove();
-          this.exhausted = true;
-          break;
-        }
-        this.eventsRendered += 1;
-      }
-      if (removeIfEmpty && this.eventsRendered === 0) {
-        this.el.remove();
-      }
-    }
-    // this has to be called after all of the columns are rendered because each new
-    // column potentially compresses and wraps the text in the columns before it
-    removeExcessEvents() {
-      const { eventsContainer } = this.els;
-      while (eventsContainer.lastElementChild && eventsContainer.lastElementChild.getBoundingClientRect().bottom > this.props.maxBottom) {
-        eventsContainer.lastElementChild.remove();
-      }
-    }
-  };
-
-  // js/components/list/list.ts
-  var ListComponent = class extends Component {
-    static template = "#list-view-template";
-    postRender() {
-      const { days, format } = this.props;
-      const columns = format === "full" && window.config.single_column !== "true";
-      const maxBottom = this.el.getBoundingClientRect().bottom;
-      const dayComponents = [];
-      let i = 0;
-      for (const day of days) {
-        if (!columns && day.events.length === 0) {
-          continue;
-        }
-        if (columns && i > 0) {
-          this.el.appendChild(verticalDivider());
-        }
-        const dayComponent = new DayComponent({
-          day,
-          maxBottom,
-          removeIfEmpty: !columns,
-          deferFitting: columns
-        });
-        dayComponent.render(this.el);
-        dayComponents.push(dayComponent);
-        i += 1;
-        if (!columns && dayComponent.exhausted) {
-          break;
-        }
-      }
-      if (columns) {
-        dayComponents.forEach((day) => day.removeExcessEvents());
-      }
-    }
-  };
-
-  // js/list_view.ts
-  var renderListView = (days, format) => {
-    const container = document.querySelector(".layout");
-    const component = new ListComponent({ days, format });
-    component.render(container);
-  };
-
   // js/components/hourly/all_day_event.ts
   var AllDayEventComponent = class extends Component {
     static template = "#all-day-event-template";
@@ -1394,9 +1276,30 @@
     }
   };
 
+  // js/util.ts
+  var verticalDivider = () => {
+    const divider = document.createElement("div");
+    divider.classList.add("divider--v");
+    return divider;
+  };
+  var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
+  var isOverflowingX = (el) => el.scrollWidth > el.getBoundingClientRect().width;
+  var textWrapping = (el) => {
+    const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
+    const height = el.getBoundingClientRect().height;
+    return height > fontSize * 2;
+  };
+  var querySelector = (selector) => {
+    const result = document.querySelector(selector);
+    if (!(result instanceof HTMLElement)) {
+      throw new Error(`Unable to locate ${selector}`);
+    }
+    return result;
+  };
+
   // js/components/hourly/event.ts
   var backgrounds = [10, 30, 60];
-  var EventComponent2 = class extends Component {
+  var EventComponent = class extends Component {
     static template = "#hourly-event";
     elements = {
       time: ".time",
@@ -1455,7 +1358,7 @@
   };
 
   // js/components/hourly/day.ts
-  var DayComponent2 = class extends Component {
+  var DayComponent = class extends Component {
     static template = "#day-template-hourly";
     elements = {
       eventsContainer: ".events"
@@ -1468,7 +1371,7 @@
         if (event.allDay || !(event.start < endTime && event.end > startTime)) {
           return;
         }
-        const eventComponent = new EventComponent2({
+        const eventComponent = new EventComponent({
           event,
           containerHeight: height,
           startTime,
@@ -1553,7 +1456,7 @@
       const dayComponents = days.map((day, i) => {
         const startTime = normalizeDay(weekWindow.min, day.date);
         const endTime = normalizeDay(weekWindow.max, day.date);
-        const dayComponent = new DayComponent2({
+        const dayComponent = new DayComponent({
           day,
           startTime,
           endTime,
@@ -1597,11 +1500,93 @@
     }
   };
 
-  // js/hourly_view.ts
-  var renderHourlyView = (days, startDate, format) => {
-    const container = document.querySelector(".layout");
-    const hourlyComponent = new HourlyComponent({ days, format, startDate });
-    hourlyComponent.render(container);
+  // js/components/list/event.ts
+  var EventComponent2 = class extends Component {
+    static template = "#event-template";
+    getProps() {
+      const { calendarIndex, name, durationString } = this.props.event;
+      return {
+        calendarIndex,
+        name,
+        durationString
+      };
+    }
+  };
+
+  // js/components/list/day.ts
+  var DayComponent2 = class extends Component {
+    static template = "#day-template-list";
+    elements = {
+      eventsContainer: ".events"
+    };
+    exhausted = false;
+    eventsRendered = 0;
+    getProps() {
+      const { dayOfWeek, dateString } = this.props.day;
+      return {
+        dayOfWeek,
+        dateString
+      };
+    }
+    postRender() {
+      const { day, maxBottom, removeIfEmpty, deferFitting } = this.props;
+      for (const event of day.events) {
+        const eventComponent = new EventComponent2({ event });
+        const eventEl = eventComponent.render(this.els.eventsContainer);
+        if (!deferFitting && this.el.getBoundingClientRect().bottom > maxBottom) {
+          eventEl.remove();
+          this.exhausted = true;
+          break;
+        }
+        this.eventsRendered += 1;
+      }
+      if (removeIfEmpty && this.eventsRendered === 0) {
+        this.el.remove();
+      }
+    }
+    // this has to be called after all of the columns are rendered because each new
+    // column potentially compresses and wraps the text in the columns before it
+    removeExcessEvents() {
+      const { eventsContainer } = this.els;
+      while (eventsContainer.lastElementChild && eventsContainer.lastElementChild.getBoundingClientRect().bottom > this.props.maxBottom) {
+        eventsContainer.lastElementChild.remove();
+      }
+    }
+  };
+
+  // js/components/list/list.ts
+  var ListComponent = class extends Component {
+    static template = "#list-view-template";
+    postRender() {
+      const { days, format } = this.props;
+      const columns = format === "full" && window.config.single_column !== "true";
+      const maxBottom = this.el.getBoundingClientRect().bottom;
+      const dayComponents = [];
+      let i = 0;
+      for (const day of days) {
+        if (!columns && day.events.length === 0) {
+          continue;
+        }
+        if (columns && i > 0) {
+          this.el.appendChild(verticalDivider());
+        }
+        const dayComponent = new DayComponent2({
+          day,
+          maxBottom,
+          removeIfEmpty: !columns,
+          deferFitting: columns
+        });
+        dayComponent.render(this.el);
+        dayComponents.push(dayComponent);
+        i += 1;
+        if (!columns && dayComponent.exhausted) {
+          break;
+        }
+      }
+      if (columns) {
+        dayComponents.forEach((day) => day.removeExcessEvents());
+      }
+    }
   };
 
   // js/main.ts
@@ -1614,12 +1599,26 @@
     if (window.config.single_column === "true") {
       layout.classList.add("single-column");
     }
+    if (window.config.show_title_bar === "false") {
+      const titleBar = querySelector(".title_bar");
+      titleBar.style.display = "none";
+    }
     const days = bucketEvents(events, startDate, numDays);
     if (window.config.view_type === "list") {
       renderListView(days, format);
     } else {
       renderHourlyView(days, startDate, format);
     }
+  };
+  var renderListView = (days, format) => {
+    const container = querySelector(".layout");
+    const component = new ListComponent({ days, format });
+    component.render(container);
+  };
+  var renderHourlyView = (days, startDate, format) => {
+    const container = querySelector(".layout");
+    const hourlyComponent = new HourlyComponent({ days, format, startDate });
+    hourlyComponent.render(container);
   };
 })();
 {% endraw %}

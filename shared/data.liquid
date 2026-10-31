@@ -1,18 +1,8 @@
-{% comment %}
-  Liquid -> JS handoff. Everything the scripts in shared/*.js need from the
-  payload gets serialized here. `</` is escaped so event text can't close the
-  script tag early.
-{% endcomment %}
 <script>
-  // One array of events per calendar (polling URL), indexed by calendar. With
-  // multiple URLs each response lands in IDX_n; with a single URL LaraPaper
-  // unwraps IDX_0, so its events are top-level. Missing/failed calendars are
-  // null.
   window.rawEvents = [
-    {% if IDX_0 %}{{ IDX_0.ical | json | replace: "</", "<\/" }}{% else %}{{ ical | json | replace: "</", "<\/" }}{% endif %},
-    {{ IDX_1.ical | json | replace: "</", "<\/" }},
-    {{ IDX_2.ical | json | replace: "</", "<\/" }}
+    {% if IDX_0 %}{{ IDX_0.ical | json }}{% else %}{{ ical | json }}{% endif %},
+    {{ IDX_1.ical | json }},
+    {{ IDX_2.ical | json }}
   ];
-  // user configuration (custom field values from settings.yml), keyed by keyname
-  window.config = {{ trmnl.plugin_settings.custom_fields_values | json | replace: "</", "<\/" }};
+  window.config = {{ trmnl.plugin_settings.custom_fields_values | json }};
 </script>

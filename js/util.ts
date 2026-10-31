@@ -1,7 +1,7 @@
 export const portraitHack = () => {
   // this shouldn't be necessary but larapaper doesn't seem to set these classes itself, so we will
   if (window.innerHeight > window.innerWidth) {
-    document.querySelector(".screen")?.classList.add("screen--portrait");
+    querySelector(".screen").classList.add("screen--portrait");
   }
 };
 
@@ -34,4 +34,21 @@ export const intersecting = (el1: HTMLElement, el2: HTMLElement) => {
     bounds2.top < bounds1.bottom &&
     bounds2.left < bounds1.right
   );
+};
+
+// ensures an HTMLElement is returned for easier typescripting and errors if not found
+export const querySelector = (selector: string): HTMLElement => {
+  const result = document.querySelector(selector);
+
+  if (!(result instanceof HTMLElement)) {
+    throw new Error(`Unable to locate ${selector}`);
+  }
+
+  return result;
+};
+
+export const querySelectorAll = (selector: string): HTMLElement[] => {
+  const elements = document.querySelectorAll(selector);
+
+  return Array.from(elements).filter((el) => el instanceof HTMLElement);
 };

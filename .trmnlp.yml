@@ -9,12 +9,10 @@ watch:
 # values of custom fields (defined in src/settings.yml)
 custom_fields:
   time_format: "12"
-  calendar_1_name: Home
-  calendar_2_name: Work
-  calendar_3_name: Family
   view_type: list
   num_days: 3
   single_column: false
+  show_title_bar: false
 
 # override variables
 variables:
