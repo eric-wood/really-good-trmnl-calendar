@@ -247,7 +247,15 @@
   };
   var bucketEvents = (allEvents, startDate, numDays) => {
     startDate.setHours(0, 0, 0, 0);
-    const sortedEvents = [...allEvents].sort(
+    const eventsById = {};
+    const uniqueEvents = allEvents.filter(({ id }) => {
+      if (eventsById[id]) {
+        return false;
+      }
+      eventsById[id] = true;
+      return true;
+    });
+    const sortedEvents = [...uniqueEvents].sort(
       (a, b) => a.start.valueOf() - b.start.valueOf()
     );
     return [...Array(numDays).keys()].map((i) => {
@@ -1263,11 +1271,11 @@
       };
     }
     postRender() {
-      const { day, maxBottom, removeIfEmpty } = this.props;
+      const { day, maxBottom, removeIfEmpty, deferFitting } = this.props;
       for (const event of day.events) {
         const eventComponent = new EventComponent({ event });
         const eventEl = eventComponent.render(this.els.eventsContainer);
-        if (this.el.getBoundingClientRect().bottom > maxBottom) {
+        if (!deferFitting && this.el.getBoundingClientRect().bottom > maxBottom) {
           eventEl.remove();
           this.exhausted = true;
           break;
@@ -1281,8 +1289,9 @@
     // this has to be called after all of the columns are rendered because each new
     // column potentially compresses and wraps the text in the columns before it
     removeExcessEvents() {
-      while (this.el.scrollHeight > this.props.maxBottom) {
-        this.els.eventsContainer.lastChild.remove();
+      const { eventsContainer } = this.els;
+      while (eventsContainer.lastElementChild && eventsContainer.lastElementChild.getBoundingClientRect().bottom > this.props.maxBottom) {
+        eventsContainer.lastElementChild.remove();
       }
     }
   };
@@ -1306,7 +1315,8 @@
         const dayComponent = new DayComponent({
           day,
           maxBottom,
-          removeIfEmpty: !columns
+          removeIfEmpty: !columns,
+          deferFitting: columns
         });
         dayComponent.render(this.el);
         dayComponents.push(dayComponent);
@@ -1365,15 +1375,7 @@
     static template = "#all-day-events-template";
     postRender() {
       const { events, startDate, numDays } = this.props;
-      const eventsById = {};
-      const unique = events.filter(({ id }) => {
-        if (eventsById[id]) {
-          return false;
-        }
-        eventsById[id] = true;
-        return true;
-      });
-      unique.forEach((event) => {
+      events.forEach((event) => {
         const component = new AllDayEventComponent({ event, startDate, numDays });
         component.render(this.el);
       });
@@ -1539,8 +1541,8 @@
       linesContainer: ".lines"
     };
     postRender() {
-      const { days, startDate } = this.props;
-      const allEvents = days.flatMap(({ events }) => events);
+      const { days } = this.props;
+      const allEvents = [...new Set(days.flatMap(({ events }) => events))];
       const numCalendars = new Set(
         allEvents.map(({ calendarIndex }) => calendarIndex)
       ).size;
@@ -1548,11 +1550,9 @@
       this.renderAllDay(allEvents);
       const weekWindow = minMaxHour(allEvents);
       const numHours = weekWindow.numHours;
-      const startTime = weekWindow.min;
-      const endTime = weekWindow.max;
       const dayComponents = days.map((day, i) => {
-        startTime.setDate(startDate.getDate() + i);
-        endTime.setDate(startDate.getDate() + i);
+        const startTime = normalizeDay(weekWindow.min, day.date);
+        const endTime = normalizeDay(weekWindow.max, day.date);
         const dayComponent = new DayComponent2({
           day,
           startTime,
@@ -1569,7 +1569,7 @@
       });
       const linesComponent = new LinesComponent({
         firstDayEl: dayComponents[0].el,
-        startTime,
+        startTime: weekWindow.min,
         numHours
       });
       linesComponent.render(this.el);

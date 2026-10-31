@@ -100,8 +100,18 @@ export const bucketEvents = (
 ): Day[] => {
   startDate.setHours(0, 0, 0, 0);
 
+  // larapaper creates an entry for every day an all-day event exists, so we must dedupe
+  const eventsById = {};
+  const uniqueEvents = allEvents.filter(({ id }) => {
+    if (eventsById[id]) {
+      return false;
+    }
+    eventsById[id] = true;
+    return true;
+  });
+
   // sort once up front; filter below preserves order within each day
-  const sortedEvents = [...allEvents].sort(
+  const sortedEvents = [...uniqueEvents].sort(
     (a, b) => a.start.valueOf() - b.start.valueOf(),
   );
 

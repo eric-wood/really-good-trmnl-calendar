@@ -14,17 +14,7 @@ export class AllDayEventsComponent extends Component<AllDayEventsProps> {
   postRender() {
     const { events, startDate, numDays } = this.props;
 
-    // all-day events get an entry per day, so de-dupe them first
-    const eventsById = {};
-    const unique = events.filter(({ id }) => {
-      if (eventsById[id]) {
-        return false;
-      }
-      eventsById[id] = true;
-      return true;
-    });
-
-    unique.forEach((event) => {
+    events.forEach((event) => {
       const component = new AllDayEventComponent({ event, startDate, numDays });
       component.render(this.el);
     });

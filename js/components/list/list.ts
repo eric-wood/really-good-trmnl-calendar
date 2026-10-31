@@ -36,6 +36,7 @@ export class ListComponent extends Component<ListProps> {
         day,
         maxBottom,
         removeIfEmpty: !columns,
+        deferFitting: columns,
       });
       dayComponent.render(this.el);
       dayComponents.push(dayComponent);

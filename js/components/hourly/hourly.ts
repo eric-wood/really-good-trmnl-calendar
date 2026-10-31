@@ -1,5 +1,5 @@
 import { Component } from "@/component";
-import { Day, Event, minMaxHour } from "@/events";
+import { Day, Event, minMaxHour, normalizeDay } from "@/events";
 import { Format } from "@/main";
 import { AllDayEventsComponent } from "./all_day_events";
 import { DayHeaderComponent } from "./day_header";
@@ -20,9 +20,10 @@ export class HourlyComponent extends Component<HourlyProps> {
   };
 
   postRender() {
-    const { days, startDate } = this.props;
+    const { days } = this.props;
 
-    const allEvents = days.flatMap(({ events }) => events);
+    // multi-day events appear in every day they span; dedupe after flattening
+    const allEvents = [...new Set(days.flatMap(({ events }) => events))];
     const numCalendars = new Set(
       allEvents.map(({ calendarIndex }) => calendarIndex),
     ).size;
@@ -34,12 +35,11 @@ export class HourlyComponent extends Component<HourlyProps> {
 
     // TODO: logic to handle when this duration is tiny; maybe set a min day size?
     const numHours = weekWindow.numHours;
-    const startTime = weekWindow.min;
-    const endTime = weekWindow.max;
 
     const dayComponents = days.map((day, i) => {
-      startTime.setDate(startDate.getDate() + i);
-      endTime.setDate(startDate.getDate() + i);
+      // important: this creates a new copy of the Date we can mess with
+      const startTime = normalizeDay(weekWindow.min, day.date);
+      const endTime = normalizeDay(weekWindow.max, day.date);
 
       const dayComponent = new DayComponent({
         day,
@@ -60,7 +60,7 @@ export class HourlyComponent extends Component<HourlyProps> {
 
     const linesComponent = new LinesComponent({
       firstDayEl: dayComponents[0].el,
-      startTime,
+      startTime: weekWindow.min,
       numHours,
     });
     linesComponent.render(this.el);

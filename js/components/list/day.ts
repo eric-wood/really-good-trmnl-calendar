@@ -6,6 +6,7 @@ interface DayProps {
   day: Day;
   maxBottom: number;
   removeIfEmpty: boolean;
+  deferFitting: boolean;
 }
 
 export class DayComponent extends Component<DayProps> {
@@ -27,13 +28,13 @@ export class DayComponent extends Component<DayProps> {
   }
 
   postRender() {
-    const { day, maxBottom, removeIfEmpty } = this.props;
+    const { day, maxBottom, removeIfEmpty, deferFitting } = this.props;
 
     for (const event of day.events) {
       const eventComponent = new EventComponent({ event });
       const eventEl = eventComponent.render(this.els.eventsContainer);
 
-      if (this.el.getBoundingClientRect().bottom > maxBottom) {
+      if (!deferFitting && this.el.getBoundingClientRect().bottom > maxBottom) {
         eventEl.remove();
         this.exhausted = true;
         break;
@@ -50,8 +51,13 @@ export class DayComponent extends Component<DayProps> {
   // this has to be called after all of the columns are rendered because each new
   // column potentially compresses and wraps the text in the columns before it
   removeExcessEvents() {
-    while (this.el.scrollHeight > this.props.maxBottom) {
-      this.els.eventsContainer.lastChild.remove();
+    const { eventsContainer } = this.els;
+    while (
+      eventsContainer.lastElementChild &&
+      eventsContainer.lastElementChild.getBoundingClientRect().bottom >
+        this.props.maxBottom
+    ) {
+      eventsContainer.lastElementChild.remove();
     }
   }
 }
