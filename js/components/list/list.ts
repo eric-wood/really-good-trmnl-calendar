@@ -15,7 +15,7 @@ export class ListComponent extends Component<ListProps> {
   postRender() {
     const { days, format } = this.props;
 
-    const columns = format === "full" && window.config.single_column !== "true";
+    const columns = format === "full" && !window.config.single_column;
 
     // we take extra care to ensure we only render as many events as can fit in the vertical height!
     const maxBottom = this.el.getBoundingClientRect().bottom;

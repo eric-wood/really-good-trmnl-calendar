@@ -5,4 +5,16 @@
     {{ IDX_2.ical | json }}
   ];
   window.config = {{ trmnl.plugin_settings.custom_fields_values | json }};
+
+  // trmnlp's `json` filter treats booleans as strings, but larapaper's doesn't,
+  // so we'll want to convert these manually to play it safe...
+  [
+    "single_column",
+    "show_title_bar",
+  ].forEach((key) => {
+    const value = window.config[key];
+    if (typeof value === "string") {
+      window.config[key] = value === "true";
+    }
+  })
 </script>

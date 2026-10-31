@@ -15,8 +15,8 @@ declare global {
     time_format?: "12" | "24";
     view_type?: ViewType;
     num_days?: string | number;
-    single_column?: string;
-    show_title_bar: string;
+    single_column?: boolean;
+    show_title_bar: boolean;
   }
 
   interface Window {

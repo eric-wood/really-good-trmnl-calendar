@@ -13,14 +13,17 @@ window.renderEvents = (format: Format) => {
 
   const layout = querySelector(".layout");
   layout.classList.add(format);
-  if (window.config.single_column === "true") {
+  if (window.config.single_column) {
     layout.classList.add("single-column");
   }
 
-  if (window.config.show_title_bar === "false") {
+  if (!window.config.show_title_bar) {
+    console.log("hiding title bar...");
     const titleBar = querySelector(".title_bar");
     titleBar.style.display = "none";
   }
+
+  console.log(window.config);
 
   const days = bucketEvents(events, startDate, numDays);
   if (window.config.view_type === "list") {

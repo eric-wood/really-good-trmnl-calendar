@@ -117,6 +117,18 @@
     {{ IDX_2.ical | json }}
   ];
   window.config = {{ trmnl.plugin_settings.custom_fields_values | json }};
+
+  // trmnlp's `json` filter treats booleans as strings, but larapaper's doesn't,
+  // so we'll want to convert these manually to play it safe...
+  [
+    "single_column",
+    "show_title_bar",
+  ].forEach((key) => {
+    const value = window.config[key];
+    if (typeof value === "string") {
+      window.config[key] = value === "true";
+    }
+  })
 </script>
 {% raw %}
 <template id="hourly-template">
@@ -1166,13 +1178,30 @@
   }
   var template_default = template;
 
+  // js/util.ts
+  var verticalDivider = () => {
+    const divider = document.createElement("div");
+    divider.classList.add("divider--v");
+    return divider;
+  };
+  var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
+  var isOverflowingX = (el) => el.scrollWidth > el.getBoundingClientRect().width;
+  var textWrapping = (el) => {
+    const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
+    const height = el.getBoundingClientRect().height;
+    return height > fontSize * 2;
+  };
+  var querySelector = (selector) => {
+    const result = document.querySelector(selector);
+    if (!(result instanceof HTMLElement)) {
+      throw new Error(`Unable to locate ${selector}`);
+    }
+    return result;
+  };
+
   // js/template.ts
   var template2 = (selector) => {
-    const el = document.querySelector(selector);
-    if (!el) {
-      console.error(`unable to locate template ${selector}`);
-      return;
-    }
+    const el = querySelector(selector);
     const raw = el.innerHTML;
     const compiled = template_default(raw, { interpolate: /{{([\s\S]+?)}}/g });
     return (...args) => {
@@ -1274,27 +1303,6 @@
         dateString
       };
     }
-  };
-
-  // js/util.ts
-  var verticalDivider = () => {
-    const divider = document.createElement("div");
-    divider.classList.add("divider--v");
-    return divider;
-  };
-  var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
-  var isOverflowingX = (el) => el.scrollWidth > el.getBoundingClientRect().width;
-  var textWrapping = (el) => {
-    const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
-    const height = el.getBoundingClientRect().height;
-    return height > fontSize * 2;
-  };
-  var querySelector = (selector) => {
-    const result = document.querySelector(selector);
-    if (!(result instanceof HTMLElement)) {
-      throw new Error(`Unable to locate ${selector}`);
-    }
-    return result;
   };
 
   // js/components/hourly/event.ts
@@ -1559,7 +1567,7 @@
     static template = "#list-view-template";
     postRender() {
       const { days, format } = this.props;
-      const columns = format === "full" && window.config.single_column !== "true";
+      const columns = format === "full" && !window.config.single_column;
       const maxBottom = this.el.getBoundingClientRect().bottom;
       const dayComponents = [];
       let i = 0;
@@ -1594,15 +1602,17 @@
     const numDays = Number(window.config.num_days) || 3;
     const events = prepEvents();
     const startDate = /* @__PURE__ */ new Date();
-    const layout = document.querySelector(".layout");
+    const layout = querySelector(".layout");
     layout.classList.add(format);
-    if (window.config.single_column === "true") {
+    if (window.config.single_column) {
       layout.classList.add("single-column");
     }
-    if (window.config.show_title_bar === "false") {
+    if (!window.config.show_title_bar) {
+      console.log("hiding title bar...");
       const titleBar = querySelector(".title_bar");
       titleBar.style.display = "none";
     }
+    console.log(window.config);
     const days = bucketEvents(events, startDate, numDays);
     if (window.config.view_type === "list") {
       renderListView(days, format);

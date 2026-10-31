@@ -9,7 +9,7 @@ watch:
 # values of custom fields (defined in src/settings.yml)
 custom_fields:
   time_format: "12"
-  view_type: list
+  view_type: hourly
   num_days: 3
   single_column: false
   show_title_bar: false
