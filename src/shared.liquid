@@ -167,6 +167,10 @@
 </template>
 {% endraw %}
 {% raw %}
+<template id="list-view-template">
+  <div class="days flex flex--row flex--left flex--top gap--small"></div>
+</template>
+
 <template id="day-template-list">
   <div class="flex flex--col gap stretch day">
     <div class="flex flex--between flex--left stretch-x">
@@ -333,25 +337,6 @@
     max.setMilliseconds(0);
     const numHours = max.getHours() - min.getHours();
     return { min, max, numHours };
-  };
-
-  // js/util.ts
-  var deleteFirstHack = () => {
-    const toDelete = document.querySelectorAll(".delete-first")[0];
-    toDelete?.remove();
-  };
-  var verticalDivider = () => {
-    const divider = document.createElement("div");
-    divider.classList.add("divider--v");
-    divider.classList.add("delete-first");
-    return divider;
-  };
-  var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
-  var isOverflowingX = (el) => el.scrollWidth > el.getBoundingClientRect().width;
-  var textWrapping = (el) => {
-    const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
-    const height = el.getBoundingClientRect().height;
-    return height > fontSize * 2;
   };
 
   // node_modules/lodash-es/_arrayEach.js
@@ -1235,6 +1220,20 @@
     }
   };
 
+  // js/util.ts
+  var verticalDivider = () => {
+    const divider = document.createElement("div");
+    divider.classList.add("divider--v");
+    return divider;
+  };
+  var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
+  var isOverflowingX = (el) => el.scrollWidth > el.getBoundingClientRect().width;
+  var textWrapping = (el) => {
+    const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
+    const height = el.getBoundingClientRect().height;
+    return height > fontSize * 2;
+  };
+
   // js/components/list/event.ts
   var EventComponent = class extends Component {
     static template = "#event-template";
@@ -1288,38 +1287,45 @@
     }
   };
 
-  // js/list_view.ts
-  var renderListView = (days, format) => {
-    const daysContainer = document.querySelector(".days");
-    if (!daysContainer) {
-      console.error("Unable to locate days container");
-      return;
-    }
-    const columns = format === "full" && window.config.single_column !== "true";
-    const maxBottom = daysContainer.getBoundingClientRect().bottom;
-    const dayComponents = [];
-    for (const day of days) {
-      if (!columns && day.events.length === 0) {
-        continue;
+  // js/components/list/list.ts
+  var ListComponent = class extends Component {
+    static template = "#list-view-template";
+    postRender() {
+      const { days, format } = this.props;
+      const columns = format === "full" && window.config.single_column !== "true";
+      const maxBottom = this.el.getBoundingClientRect().bottom;
+      const dayComponents = [];
+      let i = 0;
+      for (const day of days) {
+        if (!columns && day.events.length === 0) {
+          continue;
+        }
+        if (columns && i > 0) {
+          this.el.appendChild(verticalDivider());
+        }
+        const dayComponent = new DayComponent({
+          day,
+          maxBottom,
+          removeIfEmpty: !columns
+        });
+        dayComponent.render(this.el);
+        dayComponents.push(dayComponent);
+        i += 1;
+        if (!columns && dayComponent.exhausted) {
+          break;
+        }
       }
       if (columns) {
-        daysContainer.appendChild(verticalDivider());
-      }
-      const dayComponent = new DayComponent({
-        day,
-        maxBottom,
-        removeIfEmpty: !columns
-      });
-      dayComponent.render(daysContainer);
-      dayComponents.push(dayComponent);
-      if (!columns && dayComponent.exhausted) {
-        break;
+        dayComponents.forEach((day) => day.removeExcessEvents());
       }
     }
-    if (columns) {
-      dayComponents.forEach((day) => day.removeExcessEvents());
-    }
-    deleteFirstHack();
+  };
+
+  // js/list_view.ts
+  var renderListView = (days, format) => {
+    const container = document.querySelector(".layout");
+    const component = new ListComponent({ days, format });
+    component.render(container);
   };
 
   // js/components/hourly/all_day_event.ts
