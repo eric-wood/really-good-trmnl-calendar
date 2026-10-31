@@ -21,6 +21,9 @@ export const verticalDivider = () => {
 export const isOverflowingY = (el: HTMLElement) =>
   el.scrollHeight > el.getBoundingClientRect().height;
 
+export const isOverflowingX = (el: HTMLElement) =>
+  el.scrollWidth > el.getBoundingClientRect().width;
+
 export const textWrapping = (el: HTMLElement) => {
   const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
   const height = el.getBoundingClientRect().height;

@@ -347,6 +347,7 @@
     return divider;
   };
   var isOverflowingY = (el) => el.scrollHeight > el.getBoundingClientRect().height;
+  var isOverflowingX = (el) => el.scrollWidth > el.getBoundingClientRect().width;
   var textWrapping = (el) => {
     const fontSize = parseInt(window.getComputedStyle(el).fontSize, 10);
     const height = el.getBoundingClientRect().height;
@@ -1432,7 +1433,7 @@
       if (textWrapping(this.els.time)) {
         this.el.classList.add("multi-line");
       }
-      if (isOverflowingY(this.el)) {
+      if (isOverflowingY(this.el) || isOverflowingX(this.el)) {
         this.els.name.classList.add("label--small");
       }
       if (isOverflowingY(this.el)) {

@@ -1,6 +1,6 @@
 import { Component } from "@/component";
 import type { Event } from "@/events";
-import { isOverflowingY, textWrapping } from "@/util";
+import { isOverflowingY, isOverflowingX, textWrapping } from "@/util";
 
 const backgrounds = [10, 30, 60];
 
@@ -74,7 +74,7 @@ export class EventComponent extends Component<EventProps> {
       this.el.classList.add("multi-line");
     }
 
-    if (isOverflowingY(this.el)) {
+    if (isOverflowingY(this.el) || isOverflowingX(this.el)) {
       // if we're still overflowing on the Y axis let's lower the font size
       this.els.name.classList.add("label--small");
     }
