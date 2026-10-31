@@ -1,0 +1,47 @@
+{% raw %}
+<template id="hourly-template">
+  <div class="days--hourly"></div>
+</template>
+
+<template id="hourly-lines-template">
+    <div class="lines"></div>
+</template>
+
+<template id="day-header-template-hourly">
+  <div class="flex flex--between flex--left stretch-x">
+    <span class="title">{{ dayOfWeek }}</span>
+    <span class="title">{{ dateString }}</span>
+  </div>
+</template>
+
+<template id="day-template-hourly">
+  <div class="day">
+    <div class="events"></div>
+  </div>
+</template>
+
+<template id="hour-marker-template">
+  <div class="hour-marker" style="top: {{ y }}px">
+    <div class="divider"></div>
+    <div class="label label--small bg--white">{{ hour }}</div>
+  </div>
+</template>
+
+<template id="hourly-event">
+  <div class="hourly-event bg--white">
+    <div class="name label">{{ name }}</div>
+    <div class="time label label--small">{{ durationString }}</div>
+    <div class="stripe"></div>
+  </div>
+</template>
+
+<template id="all-day-events-template">
+  <div class="all-day"></div>
+</template>
+
+<template id="all-day-event-template">
+  <div class="all-day-event {{ className }}" style="grid-column: {{ column }} / {{ span }}">
+    <div class="label label--small">{{ name }}</div>
+  </div>
+</template>
+{% endraw %}

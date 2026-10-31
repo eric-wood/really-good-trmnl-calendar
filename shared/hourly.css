@@ -1,0 +1,100 @@
+.days--hourly {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(
+    {{trmnl.plugin_settings.custom_fields_values.num_days}},
+    1fr
+  );
+  grid-template-rows: auto auto 1fr;
+  gap: 15px;
+}
+
+.days--hourly .divider--v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -7.5px;
+  grid-row: 1 / -1;
+  z-index: 1;
+}
+
+.days--hourly .lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  grid-row: 3;
+}
+
+.all-day {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-row: 2;
+  grid-column: 1 / -1;
+  z-index: 2;
+}
+
+.hour-marker {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.hour-marker .label {
+  position: absolute;
+  transform: translateY(-50%);
+  text-align: right;
+}
+
+.all-day > *:first-child {
+  margin-top: 0;
+}
+
+.all-day-event {
+  padding-left: 3px;
+  border: solid var(--bg-black-color) 1px;
+  background-color: var(--bg-white-color);
+  margin-top: -1px;
+}
+
+.all-day-event.before {
+  margin-left: -100px;
+  padding-left: 101px;
+}
+
+.all-day-event.after {
+  margin-right: -100px;
+}
+
+.events {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.hourly-event {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 3px;
+  border: solid var(--bg-black-color) 1px;
+  z-index: 1;
+}
+
+.hourly-event.multi-line {
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.hourly-event .stripe {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 5px;
+}
+
+.hourly-event .label {
+  align-items: flex-start;
+}

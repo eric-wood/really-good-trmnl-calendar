@@ -13,7 +13,7 @@ custom_fields:
   calendar_2_name: Work
   calendar_3_name: Family
   view_type: hourly
-  num_days: 3
+  num_days: 2
   single_column: false
 
 # override variables

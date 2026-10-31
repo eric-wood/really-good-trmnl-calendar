@@ -1,50 +1,11 @@
-{% raw %}
-<template id="day-template-list">
-  <div class="flex flex--col gap flex--stretch-x day">
-    <div class="flex flex--between flex--left flex--stretch-x">
-      <span class="title">{{ dayOfWeek }}</span>
-      <span class="title">{{ dateString }}</span>
-    </div>
-    <div class="divider"></div>
-    <div class="events flex flex--col gap--small"></div>
-  </div>
-</template>
-
-<template id="event-template">
-  <div class="item item--emphasis-{{ calendarIndex }}">
-    <div class="meta"></div>
-    <div class="content">
-      <span class="title title--small">{{ name }}</span>
-      <span class="description">{{ durationString }}</span>
-    </div>
-  </div>
-</template>
-
-<template id="hour-marker-template">
-  <div class="hour-marker" style="top: {{ y }}px">
-    <div class="divider"></div>
-    <div class="label label--small bg--white">{{ hour }}</div>
-  </div>
-</template>
-
-<template id="hourly-event">
-  <div class="hourly-event bg--white rounded--xsmall" style="top: {{ top }}px; bottom: {{ bottom }}px;">
-    <div class="label" data-value-fit="true">{{ name }}</div>
-    <div>
-      <span class="label label--small">{{ durationString }}</span>
-    </div>
-    <div class="stripe"></div>
-  </div>
-</template>
-{% endraw %}
-
 <div class="layout layout--col layout--stretch layout--left">
-  <div class="days flex flex--col flex--left flex--stretch-x gap"></div>
 </div>
 
+<!--
 <div class="title_bar">
   <span class="title">Calendar</span>
 </div>
+-->
 
 <script>
   window.renderEvents("half_vertical");
