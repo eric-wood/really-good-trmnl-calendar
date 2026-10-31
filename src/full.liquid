@@ -61,7 +61,7 @@
 </template>
 
 <template id="all-day-event-template">
-  <div class="all-day-event">
+  <div class="all-day-event {{ className }}" style="grid-column: {{ column }} / {{ span }}">
     <div class="label label--small">{{ name }}</div>
   </div>
 </template>
@@ -120,6 +120,26 @@
   position: absolute;
   transform: translateY(-50%);
   text-align: right;
+}
+
+.all-day > *:first-child {
+  margin-top: 0;
+}
+
+.all-day-event {
+  padding-left: 3px;
+  border: solid var(--bg-black-color) 1px;
+  background-color: var(--bg-white-color);
+  margin-top: -1px;
+}
+
+.all-day-event.before {
+  margin-left: -100px;
+  padding-left: 101px;
+}
+
+.all-day-event.after {
+  margin-right: -100px;
 }
 
 .events {

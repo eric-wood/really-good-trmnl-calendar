@@ -1154,20 +1154,39 @@
   var AllDayEventComponent = class extends Component {
     static template = "#all-day-event-template";
     getProps() {
-      const { name } = this.props.event;
+      const { event, startDate, numDays } = this.props;
+      const { name } = event;
+      const classes = [];
+      let column = dateDiff(startDate, event.start) + 1;
+      if (column <= 0) {
+        column = 1;
+        classes.push("before");
+      }
+      let eventLen = dateDiff(startDate, event.end);
+      let span = eventLen;
+      if (eventLen > numDays) {
+        span = numDays;
+        classes.push("after");
+      }
+      span += 1;
+      const className = classes.join(" ");
       return {
-        name
+        name,
+        column,
+        span,
+        className
       };
     }
     postRender() {
     }
   };
+  var dateDiff = (date1, date2) => Math.round((date2.valueOf() - date1.valueOf()) / (1e3 * 60 * 60 * 24));
 
   // js/components/hourly/all_day_events.ts
   var AllDayEventsComponent = class extends Component {
     static template = "#all-day-events-template";
     postRender() {
-      const { events } = this.props;
+      const { events, startDate, numDays } = this.props;
       const eventsById = {};
       const unique = events.filter(({ id }) => {
         if (eventsById[id]) {
@@ -1177,7 +1196,7 @@
         return true;
       });
       unique.forEach((event) => {
-        const component = new AllDayEventComponent({ event });
+        const component = new AllDayEventComponent({ event, startDate, numDays });
         component.render(this.el);
       });
     }
@@ -1389,9 +1408,12 @@
       });
     }
     renderAllDay(allEvents) {
+      const { days, startDate } = this.props;
       const allDayEvents = allEvents.filter(({ allDay }) => allDay);
       const allDayEventsComponent = new AllDayEventsComponent({
-        events: allDayEvents
+        events: allDayEvents,
+        startDate,
+        numDays: days.length
       });
       allDayEventsComponent.render(this.el);
     }

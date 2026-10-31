@@ -4,13 +4,15 @@ import { AllDayEventComponent } from "./all_day_event";
 
 interface AllDayEventsProps {
   events: Event[];
+  startDate: Date;
+  numDays: number;
 }
 
 export class AllDayEventsComponent extends Component<AllDayEventsProps> {
   static template = "#all-day-events-template";
 
   postRender() {
-    const { events } = this.props;
+    const { events, startDate, numDays } = this.props;
 
     // all-day events get an entry per day, so de-dupe them first
     const eventsById = {};
@@ -23,7 +25,7 @@ export class AllDayEventsComponent extends Component<AllDayEventsProps> {
     });
 
     unique.forEach((event) => {
-      const component = new AllDayEventComponent({ event });
+      const component = new AllDayEventComponent({ event, startDate, numDays });
       component.render(this.el);
     });
   }

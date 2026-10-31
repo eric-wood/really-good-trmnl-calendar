@@ -5,7 +5,6 @@ import { AllDayEventsComponent } from "./all_day_events";
 import { DayHeaderComponent } from "./day_header";
 import { DayComponent } from "./day";
 import { verticalDivider } from "@/util";
-import { MarkerComponent } from "./marker";
 import { LinesComponent } from "./lines";
 
 interface HourlyProps {
@@ -83,9 +82,13 @@ export class HourlyComponent extends Component<HourlyProps> {
   }
 
   renderAllDay(allEvents: Event[]) {
+    const { days, startDate } = this.props;
+
     const allDayEvents = allEvents.filter(({ allDay }) => allDay);
     const allDayEventsComponent = new AllDayEventsComponent({
       events: allDayEvents,
+      startDate,
+      numDays: days.length,
     });
     allDayEventsComponent.render(this.el);
   }
